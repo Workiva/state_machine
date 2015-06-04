@@ -1,0 +1,5 @@
+name: state_machine
+version: 0.0.0
+dev_dependencies:
+  browser: '>=0.10.0 <0.11.0'
+  test: '0.12.2'

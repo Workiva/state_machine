@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>State Machine Example: Door</title>
+
+    <link rel="stylesheet" href="door.css">
+    <script type="application/dart" src="door_example.dart"></script>
+    <script src="packages/browser/dart.js"></script>
+</head>
+<body>
+    <div id="container">
+        <div id="state-machine">
+            <div id="open" class="state active">Open</div>
+            <div id="closed" class="state close">Closed</div>
+            <div id="locked" class="state lock">Locked</div>
+        </div>
+        <div id="door-frame" class="open">
+            <div id="door"></div>
+            <div id="door-label"></div>
+        </div>
+    </div>
+</body>
+</html>

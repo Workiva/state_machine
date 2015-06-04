@@ -1,0 +1,78 @@
+* {
+    font-family: Helvetica, sans-serif;
+}
+
+#container {
+    padding: 25px;
+    text-align: center;
+}
+
+#state-machine .state {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    border: 4px solid #666;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: color .1s, background-color .1s;
+}
+
+#state-machine .state.active {
+    background-color: #66cc00;
+    color: #fff;
+}
+
+#state-machine .state.illegal {
+    background-color: #ee2724;
+    color: #fff;
+}
+
+#door-frame {
+    position: relative;
+    width: 250px;
+    height: 400px;
+    margin: 40px auto 0;
+    border: 5px solid #5c2c00;
+    border-bottom: none;
+}
+
+#door {
+    height: 400px;
+    transition: width .5s;
+    background-color: #853f00;
+}
+
+#door-frame.open #door {
+    width: 0;
+}
+
+#door-frame.closed #door, #door-frame.locked #door {
+    width: 100%;
+}
+
+#door-label:after {
+    position: absolute;
+    top: 45%;
+    left: 0;
+    width: 250px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 40px;
+    transition: color .5s;
+}
+
+#door-frame.open #door-label:after {
+    content: 'open';
+    color: #000;
+}
+
+#door-frame.closed #door-label:after {
+    content: 'closed';
+    color: #fff;
+}
+
+#door-frame.locked #door-label:after {
+    content: 'locked';
+    color: #fff;
+}
