@@ -3,6 +3,37 @@ library state_machine.src.state_machine;
 import 'dart:async';
 
 /// A simple, typed finite state machine.
+///
+/// Creating a state machine takes 3 steps:
+/// 1. Instantiate a [StateMachine].
+/// 2. Create the set of states.
+/// 3. Create the set of valid state transitions.
+///
+///     // 1.
+///     StateMachine machine = new StateMachine();
+///
+///     // 2.
+///     State isOn = door.newState('on');
+///     State isOff = door.newState('off');
+///
+///     // 3.
+///     StateTransition turnOn = door.newStateTransition('turnOn', [isOff], isOn);
+///     StateTransition turnOff = door.newStateTransition('turnOff', [isOn], isOff);
+///
+/// Once the state machine is setup as desired,
+/// it must be started at a specific state. Once started,
+/// no additional states or transitions can be added.
+///
+///     machine.start(isOff);
+///
+/// At any point, you can retrieve the current state
+/// from the machine:
+///
+///     State current = machine.current;
+///
+/// Once initialized, the state machine is driven by the
+/// states and the state transitions. See [State] and
+/// [StateTransition] for more information.
 class StateMachine {
   /// [State] that the machine is currently in.
   State current;
@@ -77,6 +108,49 @@ class StateChange {
   State to;
 }
 
+/// Represents a state that can be visited within a
+/// [StateMachine] instance.
+///
+/// States must be created from a [StateMachine] instance:
+///
+///     StateMachine door = new StateMachine();
+///
+///     State isOpen = door.newState('open');
+///     State isClosed = door.newState('closed');
+///
+///     door.start(isOpen);
+///
+/// There are 3 things that can be done with states:
+/// 1. Listen for onEnter events (every time the machine enters
+/// this state).
+/// 2. Listen for onLeave events (every time the machine leaves
+/// this state).
+/// 3. Determine if the state is active (machine is currently
+/// in this state).
+///
+///     // 1.
+///     isOpen.onEnter.listen((State from) {
+///       // onEnter stream event always includes the previous state.
+///       print('${from.name} --> ${isOpen.name}');
+///     });
+///
+///     // 2.
+///     isOpen.onLeave.listen((State to) {
+///       // onLeave stream event always includes the next state.
+///       print('${isOpen.name} --> ${to.name}');
+///     });
+///
+///     // 3.
+///     isOpen();   // true
+///     isClosed(); // false
+///
+/// It's recommended that states be named in the format "is[State]".
+/// This may seem strange at first, but it has two main benefits:
+/// 1. It helps differentiate states from transitions, which can be confusing
+/// since many words in English are the same as a verb and an adjective
+/// ("open" or "secure", for example).
+/// 2. It reads better when calling the state to determine if it's active,
+/// as demonstrated above when calling `isOpen()` and `isClosed()`.
 class State implements Function {
   /// Wildcard state that should be used to define state transitions
   /// that allow transitioning from any state.
@@ -144,6 +218,81 @@ class State implements Function {
   }
 }
 
+/// Represents a legal state transition for a  [StateMachine] instance.
+///
+/// State transitions must be created from a [StateMachine] instance
+/// and must define the set of legal "from" states and a single "to"
+/// state. The machine must be in one of the "from" states in order
+/// for this transition to occur.
+///
+///     StateMachine door = new StateMachine();
+///
+///     State isOpen = door.newState('open');
+///     State isClosed = door.newState('closed');
+///
+///     StateTransition open = door.newStateTransition('open', [isClosed], isOpen);
+///     StateTransition close = door.newStateTransition('close', [isOpen], isClosed);
+///
+///     door.start(isClosed);
+///
+/// There are 3 things that can be done with state transitions:
+/// 1. Listen for the transition events (every time the machine successfully
+/// executes this transition).
+/// 2. Attempt to execute this transition (will succeed so long as
+/// it is legal given the machine's current state and it isn't canceled).
+/// 3. Add conditions that can cancel this transition.
+///
+///     // 1.
+///     open.listen((State from) {
+///       // transition stream event always includes the previous state,
+///       // since transitions can define multiple legal "from" states.
+///       print('Door opened.');
+///     });
+///
+///     // 2.
+///     open(); // returns `true` since the transition was legal and succeeded.
+///
+///     // 3.
+///     close.cancelIf(() => true); // will cancel the close transition every time
+///     close(); // returns `false` since it was canceled
+///
+/// To get a better idea of how state transitions can be used, consider
+/// the following example that integrates two separate state machines
+/// to represent the state of a lamp.
+///
+///     StateMachine powerCord = new StateMachine();
+///     State isPluggedIn = powerCord.newState('pluggedIn');
+///     State isUnplugged = powerCord.newState('unplugged');
+///     StateTransition plugIn = powerCord.newStateTransition('plugIn', [isUnplugged], isPluggedIn);
+///     StateTransition unplug = powerCord.newStateTransition('unplug', [isPluggedIn], isUnplugged);
+///
+///     StateMachine lamp = new StateMachine();
+///     State isOn = lamp.newState('on');
+///     State isOff = lamp.newState('off');
+///     StateTransition turnOn = lamp.newStateTransition('turnOn', [isOff], isOn);
+///     StateTransition turnOff = lamp.newStateTransition('turnOff', [isOn], isOff);
+///
+///     // When the power cord is unplugged, transition the lamp to the
+///     // "off" state if it is currently "on".
+///     unplug.listen((_) {
+///       if (lamp.isOn()) {
+///         lamp.turnOff();
+///       }
+///     });
+///
+///     // The lamp cannot be turned on if the power cord is unplugged.
+///     turnOn.cancelIf(isUnplugged);
+///
+///     isOn.onEnter.listen((_) => print('Light is on!'));
+///     isOn.onLeave.listen((_) => print('Light is off :(');
+///
+///     powerCord.start(isUnplugged);
+///     lamp.start(isOff);
+///
+///     turnOn(); // canceled, no power
+///     plugIn();
+///     turnOn(); // "Light is on!"
+///     unplug(); // "Light is off :("
 class StateTransition implements Function {
   /// Name of the state transition. Used for debugging.
   String name;
@@ -225,12 +374,19 @@ class StateTransition implements Function {
   }
 }
 
+/// An exception that is thrown when attempting to create a new
+/// [State] or [StateTransition] for a [StateMachine] instance
+/// that has already been started.
 class IllegalStateMachineMutation implements Exception {
   String message;
   IllegalStateMachineMutation(String this.message);
   String toString() => 'IllegalStateMachineMutation: $message';
 }
 
+/// An exception that is thrown when attempting to execute a
+/// state transition for a [StateMachine] instance when the
+/// machine is in a state that is not defined as a legal "from"
+/// state by the [StateTransition] instance.
 class IllegalStateTransition implements Exception {
   State from;
   State to;
