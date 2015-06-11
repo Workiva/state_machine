@@ -51,9 +51,26 @@
     width: 100%;
 }
 
+#door-frame #door-lock {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 0;
+    height: 40px;
+    transition: width .5s;
+    background-color: #666;
+    border: 1px solid #222;
+    border-left: 0;
+    border-right: 0;
+}
+
+#door-frame.locked #door-lock {
+    width: 100%;
+}
+
 #door-label:after {
     position: absolute;
-    top: 45%;
+    top: 35%;
     left: 0;
     width: 250px;
     text-align: center;

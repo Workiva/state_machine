@@ -8,12 +8,14 @@ class Door {
 
     isClosed = _machine.newState('closed');
     isLocked = _machine.newState('locked');
-    isOpen = _machine.newState('open', isStartingState: true);
+    isOpen = _machine.newState('open');
 
     close = _machine.newStateTransition('close', [isOpen], isClosed);
     lock = _machine.newStateTransition('lock', [isClosed], isLocked);
     open = _machine.newStateTransition('open', [isClosed], isOpen);
     unlock = _machine.newStateTransition('unlock', [isLocked], isClosed);
+
+    _machine.start(isOpen);
   }
 
   State isClosed;
