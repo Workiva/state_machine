@@ -17,6 +17,7 @@ import 'package:state_machine/src/exceptions.dart';
 ///     door.start(isOpen);
 ///
 /// There are 3 things that can be done with states:
+///
 /// 1. Listen for onEnter events (every time the machine enters
 /// this state).
 /// 2. Listen for onLeave events (every time the machine leaves
@@ -24,24 +25,27 @@ import 'package:state_machine/src/exceptions.dart';
 /// 3. Determine if the state is active (machine is currently
 /// in this state).
 ///
+/// To demonstrate:
+///
 ///     // 1.
-///     isOpen.onEnter.listen((State from) {
-///       // onEnter stream event always includes the previous state.
-///       print('${from.name} --> ${isOpen.name}');
+///     isOpen.onEnter.listen((StateChange change) {
+///       // onEnter stream event always includes the StateChange info.
+///       print('${change.from.name} --> ${isOpen.name}');
 ///     });
 ///
 ///     // 2.
-///     isOpen.onLeave.listen((State to) {
-///       // onLeave stream event always includes the next state.
-///       print('${isOpen.name} --> ${to.name}');
+///     isOpen.onLeave.listen((StateChange change) {
+///       // onLeave stream event always includes the StateChange info.
+///       print('${isOpen.name} --> ${change.to.name}');
 ///     });
 ///
 ///     // 3.
 ///     isOpen();   // true
 ///     isClosed(); // false
 ///
-/// It's recommended that states be named in the format "is[State]".
+/// It's recommended that states be named in the format "isState".
 /// This may seem strange at first, but it has two main benefits:
+///
 /// 1. It helps differentiate states from transitions, which can be confusing
 /// since many words in English are the same as a verb and an adjective
 /// ("open" or "secure", for example).
@@ -135,20 +139,23 @@ class StateChange {
 /// A simple, typed finite state machine.
 ///
 /// Creating a state machine takes 3 steps:
+///
 /// 1. Instantiate a [StateMachine].
 /// 2. Create the set of states.
 /// 3. Create the set of valid state transitions.
+///
+/// To demonstrate:
 ///
 ///     // 1.
 ///     StateMachine machine = new StateMachine();
 ///
 ///     // 2.
-///     State isOn = door.newState('on');
-///     State isOff = door.newState('off');
+///     State isOn = machine.newState('on');
+///     State isOff = machine.newState('off');
 ///
 ///     // 3.
-///     StateTransition turnOn = door.newStateTransition('turnOn', [isOff], isOn);
-///     StateTransition turnOff = door.newStateTransition('turnOff', [isOn], isOff);
+///     StateTransition turnOn = machine.newStateTransition('turnOn', [isOff], isOn);
+///     StateTransition turnOff = machine.newStateTransition('turnOff', [isOn], isOff);
 ///
 /// Once the state machine is setup as desired,
 /// it must be started at a specific state. Once started,
@@ -250,14 +257,17 @@ class StateMachine {
 ///     door.start(isClosed);
 ///
 /// There are 3 things that can be done with state transitions:
+///
 /// 1. Listen for the transition events (every time the machine successfully
 /// executes this transition).
 /// 2. Attempt to execute this transition (will succeed so long as
 /// it is legal given the machine's current state and it isn't canceled).
 /// 3. Add conditions that can cancel this transition.
 ///
+/// To demonstrate:
+///
 ///     // 1.
-///     open.listen((State from) {
+///     open.listen((StateChange change) {
 ///       // transition stream event always includes the previous state,
 ///       // since transitions can define multiple legal "from" states.
 ///       print('Door opened.');
@@ -267,7 +277,7 @@ class StateMachine {
 ///     open(); // returns `true` since the transition was legal and succeeded.
 ///
 ///     // 3.
-///     close.cancelIf(() => true); // will cancel the close transition every time
+///     close.cancelIf((StateChange change) => true); // will cancel the close transition every time
 ///     close(); // returns `false` since it was canceled
 ///
 /// To get a better idea of how state transitions can be used, consider
@@ -289,8 +299,8 @@ class StateMachine {
 ///     // When the power cord is unplugged, transition the lamp to the
 ///     // "off" state if it is currently "on".
 ///     unplug.listen((_) {
-///       if (lamp.isOn()) {
-///         lamp.turnOff();
+///       if (isOn()) {
+///         turnOff();
 ///       }
 ///     });
 ///
@@ -298,7 +308,7 @@ class StateMachine {
 ///     turnOn.cancelIf(isUnplugged);
 ///
 ///     isOn.onEnter.listen((_) => print('Light is on!'));
-///     isOn.onLeave.listen((_) => print('Light is off :(');
+///     isOn.onLeave.listen((_) => print('Light is off :('));
 ///
 ///     powerCord.start(isUnplugged);
 ///     lamp.start(isOff);

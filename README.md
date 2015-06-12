@@ -114,9 +114,20 @@ turnOn(); // "Left: off"
           // "Entered: on"
 ```
 
+### Wildcard State & State Transitions
+The `State` class exposes a static instance `State.any` that can be used as a wildcard when defining a state transition.
+
+```dart
+StateMachine machine = new StateMachine();
+State isFailed = machine.newState('failed');
+
+// This transition will be valid regardless of which state the machine is in.
+StateTransition fail = machine.newStateTransition('fail', [State.any], isFailed);
+```
+
 ### Illegal State Transitions
 When you create state transitions, you must define the list of valid "from" states. The machine must be in one of these
-states in order to execute the transition. If that's not the case, a `IllegalStateTransition` exception will be thrown.
+states in order to execute the transition. If that's not the case, an `IllegalStateTransition` exception will be thrown.
 
 ```dart
 // Consider a door with the following states and transitions.

@@ -1,4 +1,4 @@
-/// A simple, typed finite state machine.
+/// A simple, typed finite state machine library.
 ///
 /// State machines are created by defining a set
 /// of states and a set of legal state transitions.
@@ -17,8 +17,8 @@
 ///     StateTransition close = door.newStateTransition('close', [isOpen], isClosed);
 ///
 ///     door.start(isOpen);
-///     door.close();
-///     door.isClosed(); // true
+///     close();
+///     isClosed(); // true
 ///
 /// Wrapping in a class:
 ///
@@ -34,21 +34,22 @@
 ///       Door() {
 ///         _machine = new StateMachine();
 ///         isOpen = _machine.newState('open');
-///         State isClosed = door.newState('closed');
-///         open = door.newStateTransition('open', [isClosed], isOpen);
-///         close = door.newStateTransition('close', [isOpen], isClosed);
+///         isClosed = _machine.newState('closed');
+///         open = _machine.newStateTransition('open', [isClosed], isOpen);
+///         close = _machine.newStateTransition('close', [isOpen], isClosed);
 ///         _machine.start(isOpen);
 ///       }
+///     }
 ///
-///       void main() {
-///         Door door = new Door();
+///     void main() {
+///       Door door = new Door();
 ///
-///         // Exposing the [State] and [StateTransition] objects
-///         // created a useful and understandable API for the Door
-///         // class without any extra work!
-///         door.close();
-///         door.isOpen(); // true
-///       }
+///       // Exposing the [State] and [StateTransition] objects
+///       // created a useful and understandable API for the Door
+///       // class without any extra work!
+///       door.close();
+///       door.isClosed(); // true
+///     }
 library state_machine;
 
 export 'src/exceptions.dart' show IllegalStateMachineMutation, IllegalStateTransition;
