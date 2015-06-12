@@ -43,7 +43,7 @@ void main() {
       var c = new Completer();
       close.listen(c.complete);
       expect(close(), isTrue);
-      expect(await c.future, equals(isOpen));
+      expect((await c.future).from, equals(isOpen));
     });
 
     test('should be callable to execute the transition', () {
@@ -77,8 +77,8 @@ void main() {
     test('should allow transitioning from any state via the wildcard state', () async {
       var c = new Completer();
       var fromStates = [];
-      breakThrough.listen((State from) {
-        fromStates.add(from);
+      breakThrough.listen((StateChange stateChange) {
+        fromStates.add(stateChange.from);
         if (fromStates.length >= 2) {
           c.complete();
         }

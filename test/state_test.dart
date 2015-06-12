@@ -28,7 +28,7 @@ void main() {
       isOn.onEnter.listen(c.complete);
       machine.start(isOff);
       turnOn();
-      expect(await c.future, equals(isOff));
+      expect((await c.future).from, equals(isOff));
     });
 
     test('should allow litening to onLeave event', () async {
@@ -36,7 +36,7 @@ void main() {
       isOff.onLeave.listen(c.complete);
       machine.start(isOff);
       turnOn();
-      expect(await c.future, equals(isOn));
+      expect((await c.future).to, equals(isOn));
     });
 
     test('should be callable to determine if active', () {

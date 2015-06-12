@@ -2,111 +2,7 @@ library state_machine.src.state_machine;
 
 import 'dart:async';
 
-/// A simple, typed finite state machine.
-///
-/// Creating a state machine takes 3 steps:
-/// 1. Instantiate a [StateMachine].
-/// 2. Create the set of states.
-/// 3. Create the set of valid state transitions.
-///
-///     // 1.
-///     StateMachine machine = new StateMachine();
-///
-///     // 2.
-///     State isOn = door.newState('on');
-///     State isOff = door.newState('off');
-///
-///     // 3.
-///     StateTransition turnOn = door.newStateTransition('turnOn', [isOff], isOn);
-///     StateTransition turnOff = door.newStateTransition('turnOff', [isOn], isOff);
-///
-/// Once the state machine is setup as desired,
-/// it must be started at a specific state. Once started,
-/// no additional states or transitions can be added.
-///
-///     machine.start(isOff);
-///
-/// At any point, you can retrieve the current state
-/// from the machine:
-///
-///     State current = machine.current;
-///
-/// Once initialized, the state machine is driven by the
-/// states and the state transitions. See [State] and
-/// [StateTransition] for more information.
-class StateMachine {
-  /// [State] that the machine is currently in.
-  State current;
-
-  /// Whether or not this state machine has been started.
-  /// If it has, calls to [newState] and [newStateTransition]
-  /// will be prevented.
-  bool _started = false;
-
-  /// Stream controller used internally to control the
-  /// state change stream.
-  StreamController _stateChangeController;
-
-  /// Stream of state changes used internally to notify state
-  /// and state transition listeners.
-  Stream<StateChange> _stateChangeStream;
-
-  StateMachine() {
-    _stateChangeController = new StreamController();
-    _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
-
-    /// Start the machine in a temporary state.
-    /// This allows an initial state transition to occur
-    /// when the machine is started via [start].
-    current = new State._('__none__', this);
-  }
-
-  /// Stream of state change events. This allows [State]s
-  /// and [StateTransition]s to listen for state changes
-  /// and notify listeners as necessary.
-  ///
-  /// The event payload will be the previous [State].
-  Stream<StateChange> get onStateChange => _stateChangeStream;
-
-  /// Create a new [State] for this [StateMachine].
-  ///
-  /// [name] helps identify the state for debugging purposes.
-  State newState(String name) {
-    if (_started) throw new IllegalStateMachineMutation('Cannot create new state ($name) once the machine has been started.');
-    return new State._(name, this);
-  }
-
-  /// Create a new [StateTransition] for this [StateMachine].
-  ///
-  /// [name] helps identify the transition for debugging purposes.
-  /// This transition will only succeed when this [StateMachine]
-  /// is in one of the states listed in [from]. When this transition
-  /// occurs, this [StateMachine] will move to the [to] state.
-  StateTransition newStateTransition(String name, List<State> from, State to) {
-    if (_started) throw new IllegalStateMachineMutation('Cannot create new state transition ($name) once the machine has been started.');
-    return new StateTransition._(name, this, from, to);
-  }
-
-  /// Start the state machine at the given starting state.
-  void start(State startingState) {
-    if (_started) throw new StateError('Machine has already been started.');
-    _started = true;
-    _setState(startingState);
-  }
-
-  /// Set the machine state and trigger a state change event.
-  void _setState(State state) {
-    State previous = current;
-    current = state;
-    _stateChangeController.add(new StateChange(previous, current));
-  }
-}
-
-class StateChange {
-  StateChange(this.from, this.to);
-  State from;
-  State to;
-}
+import 'package:state_machine/src/exceptions.dart';
 
 /// Represents a state that can be visited within a
 /// [StateMachine] instance.
@@ -187,11 +83,11 @@ class State implements Function {
     _machine.onStateChange.listen((StateChange stateChange) {
       if (stateChange.from == this) {
         // Left this state. Notify listeners.
-        _onLeaveController.add(stateChange.to);
+        _onLeaveController.add(stateChange);
       }
       if (stateChange.to == this) {
         // Entered this state. Notify listeners.
-        _onEnterController.add(stateChange.from);
+        _onEnterController.add(stateChange);
       }
     });
   }
@@ -206,15 +102,133 @@ class State implements Function {
 
   /// Stream of enter events. Enter event occurs every time
   /// the machine enters this state.
-  Stream get onEnter => _onEnter;
+  Stream<StateChange> get onEnter => _onEnter;
 
   /// Stream of leave events. Leave event occurs every time
   /// the machine leaves this state.
-  Stream get onLeave => _onLeave;
+  Stream<StateChange> get onLeave => _onLeave;
 
   /// Determine whether or not this [State] is active.
   bool call([_]) {
     return _machine.current == this;
+  }
+}
+
+/// Represents a change for a [StateMachine] instance from
+/// one state to another. If a payload was supplied when
+/// executing the transition, it will be available via
+/// [payload].
+class StateChange {
+  /// State the machine transitioned from.
+  State from;
+
+  /// Payload supplied when the transition was called,
+  /// if any.
+  dynamic payload;
+
+  /// State the machine transitioned to.
+  State to;
+
+  StateChange._(State this.from, State this.to, this.payload);
+}
+
+/// A simple, typed finite state machine.
+///
+/// Creating a state machine takes 3 steps:
+/// 1. Instantiate a [StateMachine].
+/// 2. Create the set of states.
+/// 3. Create the set of valid state transitions.
+///
+///     // 1.
+///     StateMachine machine = new StateMachine();
+///
+///     // 2.
+///     State isOn = door.newState('on');
+///     State isOff = door.newState('off');
+///
+///     // 3.
+///     StateTransition turnOn = door.newStateTransition('turnOn', [isOff], isOn);
+///     StateTransition turnOff = door.newStateTransition('turnOff', [isOn], isOff);
+///
+/// Once the state machine is setup as desired,
+/// it must be started at a specific state. Once started,
+/// no additional states or transitions can be added.
+///
+///     machine.start(isOff);
+///
+/// At any point, you can retrieve the current state
+/// from the machine:
+///
+///     State current = machine.current;
+///
+/// Once initialized, the state machine is driven by the
+/// states and the state transitions. See [State] and
+/// [StateTransition] for more information.
+class StateMachine {
+  /// [State] that the machine is currently in.
+  State get current => _current;
+  State _current;
+
+  /// Whether or not this state machine has been started.
+  /// If it has, calls to [newState] and [newStateTransition]
+  /// will be prevented.
+  bool _started = false;
+
+  /// Stream controller used internally to control the
+  /// state change stream.
+  StreamController _stateChangeController;
+
+  /// Stream of state changes used internally to notify state
+  /// and state transition listeners.
+  Stream<StateChange> _stateChangeStream;
+
+  StateMachine() {
+    _stateChangeController = new StreamController();
+    _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
+
+    /// Start the machine in a temporary state.
+    /// This allows an initial state transition to occur
+    /// when the machine is started via [start].
+    _current = new State._('__none__', this);
+  }
+
+  /// Stream of state change events. This allows [State]s
+  /// and [StateTransition]s to listen for state changes
+  /// and notify listeners as necessary.
+  ///
+  /// The event payload will be the previous [State].
+  Stream<StateChange> get onStateChange => _stateChangeStream;
+
+  /// Create a new [State] for this [StateMachine].
+  ///
+  /// [name] helps identify the state for debugging purposes.
+  State newState(String name) {
+    if (_started) throw new IllegalStateMachineMutation('Cannot create new state ($name) once the machine has been started.');
+    return new State._(name, this);
+  }
+
+  /// Create a new [StateTransition] for this [StateMachine].
+  ///
+  /// [name] helps identify the transition for debugging purposes.
+  /// This transition will only succeed when this [StateMachine]
+  /// is in one of the states listed in [from]. When this transition
+  /// occurs, this [StateMachine] will move to the [to] state.
+  StateTransition newStateTransition(String name, List<State> from, State to) {
+    if (_started) throw new IllegalStateMachineMutation('Cannot create new state transition ($name) once the machine has been started.');
+    return new StateTransition._(name, this, from, to);
+  }
+
+  /// Start the state machine at the given starting state.
+  void start(State startingState) {
+    if (_started) throw new StateError('Machine has already been started.');
+    _started = true;
+    _transition(new StateChange._(current, startingState, null));
+  }
+
+  /// Set the machine state and trigger a state change event.
+  void _transition(StateChange stateChange) {
+    _current = stateChange.to;
+    _stateChangeController.add(stateChange);
   }
 }
 
@@ -331,11 +345,11 @@ class StateTransition implements Function {
   /// this transition executes successfully.
   ///
   /// [onData] will be called with the [State] that was transitioned from.
-  StreamSubscription listen(void onData(event),
+  StreamSubscription listen(void onTransition(StateChange stateChange),
                             { Function onError,
                               void onDone(),
                               bool cancelOnError}) {
-    return _stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    return _stream.listen(onTransition, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   /// Execute this transition. Will call any tests registered
@@ -345,54 +359,32 @@ class StateTransition implements Function {
   ///
   /// Returns true if the transition succeeded, false
   /// if it was canceled.
-  bool call() {
+  bool call([payload]) {
+    StateChange stateChange = new StateChange._(_machine.current, _to, payload);
+
     // Verify the transition is valid from the current state.
-    if (!_from.contains(_machine.current) && !_from.contains(State.any)) {
-      throw new IllegalStateTransition(this, _machine.current, _to);
+    if (!_from.contains(stateChange.from) && !_from.contains(State.any)) {
+      throw new IllegalStateTransition(this, stateChange.from, stateChange.to);
     }
 
     // Allow transition to be canceled.
     for (int i = 0; i < _cancelTests.length; i++) {
-      if (_cancelTests[i](_machine.current)) return false;
+      if (_cancelTests[i](stateChange)) return false;
     }
 
     // Transition is legal and wasn't canceled.
     // Update the machine state.
-    State from = _machine.current;
-    _machine._setState(_to);
+    _machine._transition(stateChange);
 
     // Notify listeners.
-    _streamController.add(from);
+    _streamController.add(stateChange);
     return true;
   }
 
   /// Add a test that will be called before executing
   /// this transition. If [test] returns true, the
   /// transition will be canceled.
-  void cancelIf(bool test(State from)) {
+  void cancelIf(bool test(StateChange stateChange)) {
     _cancelTests.add(test);
   }
-}
-
-/// An exception that is thrown when attempting to create a new
-/// [State] or [StateTransition] for a [StateMachine] instance
-/// that has already been started.
-class IllegalStateMachineMutation implements Exception {
-  String message;
-  IllegalStateMachineMutation(String this.message);
-  String toString() => 'IllegalStateMachineMutation: $message';
-}
-
-/// An exception that is thrown when attempting to execute a
-/// state transition for a [StateMachine] instance when the
-/// machine is in a state that is not defined as a legal "from"
-/// state by the [StateTransition] instance.
-class IllegalStateTransition implements Exception {
-  State from;
-  State to;
-  StateTransition transition;
-  IllegalStateTransition(StateTransition this.transition, State this.from, State this.to);
-  String get message => '("${transition.name}") cannot transition from "${from.name}" to "${to.name}".';
-  @override
-  String toString() => 'IllegalStateTransition: $message';
 }
