@@ -1,0 +1,7 @@
+project: node
+language: javascript
+
+runner_image: docker.webfilings.org/devops/smithy-runner-dart1.10:3.1.0
+
+script:
+  - xvfb-run -s '-screen 0 1024x768x24' ./tool/test.sh
