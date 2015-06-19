@@ -1,11 +1,11 @@
 // Copyright 2015 Workiva Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -224,7 +224,8 @@ class StateMachine {
   ///
   /// [name] helps identify the state for debugging purposes.
   State newState(String name) {
-    if (_started) throw new IllegalStateMachineMutation('Cannot create new state ($name) once the machine has been started.');
+    if (_started) throw new IllegalStateMachineMutation(
+        'Cannot create new state ($name) once the machine has been started.');
     return new State._(name, this);
   }
 
@@ -235,7 +236,8 @@ class StateMachine {
   /// is in one of the states listed in [from]. When this transition
   /// occurs, this [StateMachine] will move to the [to] state.
   StateTransition newStateTransition(String name, List<State> from, State to) {
-    if (_started) throw new IllegalStateMachineMutation('Cannot create new state transition ($name) once the machine has been started.');
+    if (_started) throw new IllegalStateMachineMutation(
+        'Cannot create new state transition ($name) once the machine has been started.');
     return new StateTransition._(name, this, from, to);
   }
 
@@ -359,8 +361,10 @@ class StateTransition implements Function {
   /// this transition.
   State _to;
 
-  StateTransition._(String this.name, StateMachine this._machine, List<State> this._from, State this._to) {
-    if (_to == State.any) throw new ArgumentError('Cannot transition to the wildcard state "State.any"');
+  StateTransition._(String this.name, StateMachine this._machine,
+      List<State> this._from, State this._to) {
+    if (_to == State.any) throw new ArgumentError(
+        'Cannot transition to the wildcard state "State.any"');
     _streamController = new StreamController();
     _stream = _streamController.stream.asBroadcastStream();
   }
@@ -370,10 +374,9 @@ class StateTransition implements Function {
   ///
   /// [onData] will be called with the [State] that was transitioned from.
   StreamSubscription listen(void onTransition(StateChange stateChange),
-                            { Function onError,
-                              void onDone(),
-                              bool cancelOnError}) {
-    return _stream.listen(onTransition, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+      {Function onError, void onDone(), bool cancelOnError}) {
+    return _stream.listen(onTransition,
+        onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
 
   /// Execute this transition. Will call any tests registered
