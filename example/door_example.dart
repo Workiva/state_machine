@@ -53,17 +53,17 @@ void main() {
   door = new Door();
 
   // Wire up state changes to DOM changes
-  door.isClosed.onEnter.listen((State from) {
+  door.isClosed.onEnter.listen((StateChange change) {
     activateState(door.isClosed);
     closeDoor();
   });
 
-  door.isLocked.onEnter.listen((State from) {
+  door.isLocked.onEnter.listen((StateChange change) {
     activateState(door.isLocked);
     lockDoor();
   });
 
-  door.isOpen.onEnter.listen((State from) {
+  door.isOpen.onEnter.listen((StateChange change) {
     activateState(door.isOpen);
     openDoor();
   });
