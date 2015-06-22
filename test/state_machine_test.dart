@@ -1,11 +1,11 @@
 // Copyright 2015 Workiva Inc.
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,14 +38,18 @@ void main() {
       expect(() => machine.start(state), throwsStateError);
     });
 
-    test('should fire the onEnter event for the starting state when the machine starts', () async {
+    test(
+        'should fire the onEnter event for the starting state when the machine starts',
+        () async {
       var c = new Completer();
       state.onEnter.listen(c.complete);
       machine.start(state);
       await c.future;
     });
 
-    test('should throw IllegalStateMachineMutation if a state is added after machine has been started', () {
+    test(
+        'should throw IllegalStateMachineMutation if a state is added after machine has been started',
+        () {
       var error;
       machine.start(state);
       try {
@@ -54,10 +58,13 @@ void main() {
         error = e;
       }
       expect(error, isNotNull);
-      expect(error.toString().contains('Cannot create new state (state2)'), isTrue);
+      expect(error.toString().contains('Cannot create new state (state2)'),
+          isTrue);
     });
 
-    test('should throw IllegalStateMachineMutation if a state transition is added after machine has been started', () {
+    test(
+        'should throw IllegalStateMachineMutation if a state transition is added after machine has been started',
+        () {
       var error;
       machine.start(state);
       try {
@@ -66,7 +73,9 @@ void main() {
         error = e;
       }
       expect(error, isNotNull);
-      expect(error.toString().contains('Cannot create new state transition (transition)'), isTrue);
+      expect(error
+          .toString()
+          .contains('Cannot create new state transition (transition)'), isTrue);
     });
   });
 }
