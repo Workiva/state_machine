@@ -1,4 +1,4 @@
-Dart State Machine
+Dart State Machine [![Build Status](https://travis-ci.org/Workiva/state_machine.svg?branch=master)](https://travis-ci.org/Workiva/state_machine)
 ------------------
 
 > Easily create a finite state machine and define legal state transitions. Listen to state entrances, departures, and transitions.
