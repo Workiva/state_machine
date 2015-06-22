@@ -1,0 +1,7 @@
+language: dart
+dart:
+  - stable
+script:
+  - pub run test
+  - ./tool/analyze.sh
+  - ./tool/dartfmt.sh -e
