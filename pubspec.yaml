@@ -1,14 +1,6 @@
 name: state_machine
 version: 0.0.0
 dev_dependencies:
-  browser: '>=0.10.0 <0.11.0'
-  coverage:
-    git:
-      url: https://github.com/ekweible/coverage.git
-      ref: 796a265
-  dart_codecov_generator:
-    git:
-      url: https://github.com/ekweible/dart_codecov_generator.git
-      ref: 0.3.0
-  dart_style: '>=0.1.8 <0.2.0'
-  test: '0.12.2'
+  browser: "^0.10.0"
+  dart_style: "^0.1.8"
+  test: "^0.12.3+2"
