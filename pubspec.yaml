@@ -1,5 +1,5 @@
 name: state_machine
-version: 0.0.0
+version: 1.0.0
 dev_dependencies:
   browser: "^0.10.0"
   dart_style: "^0.1.8"
