@@ -1,6 +1,13 @@
 name: state_machine
 version: 1.0.0
+description: Finite state machine library. Easily define legal state transitions. Listen to state entrances, departures, and transitions.
+authors:
+  - Workiva Client Platform Team <clientplatform@workiva.com>
+  - Evan Weible <evan.weible@workiva.com>
+  - Max Peterson <maxwell.peterson@workiva.com>
+  - Trent Grover <trent.grover@workiva.com>
+homepage: https://github.com/Workiva/state_machine
 dev_dependencies:
-  browser: "^0.10.0"
-  dart_style: "^0.1.8"
-  test: "^0.12.3+2"
+  browser: ">=0.10.0 <0.11.0"
+  dart_style: ">=0.1.8 <0.2.0"
+  test: ">=0.12.3+2 <0.13.0"
