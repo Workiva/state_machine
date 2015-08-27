@@ -15,8 +15,7 @@ pubspec.lock
 *.iml
 
 # Or the files created by coverage.
-coverage.lcov
-coverage_report
+/coverage/
 
 # Or the files created by docgen.
 dartdoc-viewer

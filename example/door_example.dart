@@ -75,7 +75,7 @@ void main() {
   open.onClick.listen((event) {
     try {
       door.open();
-    } on IllegalStateTransition catch (e) {
+    } on IllegalStateTransition {
       illegalStateTransition(open);
     }
   });
@@ -89,7 +89,7 @@ void main() {
   lock.onClick.listen((event) {
     try {
       door.lock();
-    } on IllegalStateTransition catch (e) {
+    } on IllegalStateTransition {
       illegalStateTransition(lock);
     }
   });

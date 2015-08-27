@@ -8,6 +8,10 @@ authors:
   - Trent Grover <trent.grover@workiva.com>
 homepage: https://github.com/Workiva/state_machine
 dev_dependencies:
-  browser: ">=0.10.0 <0.11.0"
-  dart_style: ">=0.1.8 <0.2.0"
-  test: ">=0.12.3+2 <0.13.0"
+  browser: "^0.10.0"
+  coverage: "^0.7.2"
+  dart_dev: "^1.0.0"
+  dart_style: "^0.2.0"
+  test: "^0.12.3+2"
+environment:
+  sdk: ">=1.9.0 <2.0.0"

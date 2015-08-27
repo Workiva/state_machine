@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@TestOn('vm || browser')
 library state_machine.test.state_machine_test;
 
 import 'dart:async';
@@ -73,9 +74,11 @@ void main() {
         error = e;
       }
       expect(error, isNotNull);
-      expect(error
-          .toString()
-          .contains('Cannot create new state transition (transition)'), isTrue);
+      expect(
+          error
+              .toString()
+              .contains('Cannot create new state transition (transition)'),
+          isTrue);
     });
   });
 }
