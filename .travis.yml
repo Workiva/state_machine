@@ -2,6 +2,8 @@ language: dart
 dart:
   - stable
 script:
-  - pub run test
-  - ./tool/analyze.sh
-  - ./tool/dartfmt.sh -e
+  - pub run dart_dev analyze
+  - pub run dart_dev format --check
+  - pub run dart_dev test
+  - pub run dart_dev coverage --no-html
+  - bash <(curl -s https://codecov.io/bash) -f coverage/coverage.lcov
