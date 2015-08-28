@@ -22,12 +22,14 @@ import 'package:test/test.dart';
 
 void main() {
   group('StateMachine', () {
-    var machine;
-    var state;
+    StateMachine machine;
+    State state;
+    State otherState;
 
     setUp(() {
-      machine = new StateMachine();
+      machine = new StateMachine('machine');
       state = machine.newState('state');
+      otherState = machine.newState('other');
     });
 
     test('should be in a dummy state until the machine has been started', () {
@@ -79,6 +81,13 @@ void main() {
               .toString()
               .contains('Cannot create new state transition (transition)'),
           isTrue);
+    });
+
+    test('.toString() should provide a helpful result', () {
+      machine.start(state);
+      String s = machine.toString();
+      expect(s, contains(machine.name));
+      expect(s, contains('${state.name} (active)'));
     });
   });
 }

@@ -33,7 +33,7 @@ void main() {
     StateTransition unlock;
 
     setUp(() {
-      machine = new StateMachine();
+      machine = new StateMachine('machine');
 
       isBroken = machine.newState('broken');
       isClosed = machine.newState('closed');
@@ -116,6 +116,45 @@ void main() {
       expect(error, isNotNull);
       expect(error.message.contains('("close")'), isTrue);
       expect(error.toString().contains('from "locked" to "closed"'), isTrue);
+    });
+
+    test('.toString() should provide a helpful result', () {
+      String closeStr = close.toString();
+      expect(closeStr, contains(close.name));
+      expect(closeStr, contains(isOpen.name));
+      expect(closeStr, contains(isClosed.name));
+
+      String openStr = open.toString();
+      expect(openStr, contains(open.name));
+      expect(openStr, contains(isClosed.name));
+      expect(openStr, contains(isLocked.name));
+      expect(openStr, contains(isOpen.name));
+    });
+
+    test('.toString() should provide a helpful result for the state change',
+        () async {
+      Completer closeC = new Completer();
+      Completer openC = new Completer();
+
+      isOpen.onEnter.listen((stateChange) {
+        // state change from the transition to initial starting state
+        String s = stateChange.toString();
+        expect(s, contains('(none)'));
+        expect(s, contains(isOpen.name));
+        openC.complete();
+      });
+
+      isClosed.onEnter.listen((stateChange) {
+        // manual state change, which should have a payload
+        String s = stateChange.toString();
+        expect(s, contains(isOpen.name));
+        expect(s, contains(isClosed.name));
+        expect(s, contains('payload: payload'));
+        closeC.complete();
+      });
+
+      close('payload');
+      await Future.wait([closeC.future, openC.future]);
     });
   });
 }

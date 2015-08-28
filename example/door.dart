@@ -18,7 +18,7 @@ import 'package:state_machine/state_machine.dart';
 
 class Door {
   Door() {
-    _machine = new StateMachine();
+    _machine = new StateMachine('door');
 
     isClosed = _machine.newState('closed');
     isLocked = _machine.newState('locked');
@@ -42,4 +42,7 @@ class Door {
   StateTransition unlock;
 
   StateMachine _machine;
+
+  @override
+  String toString() => _machine.toString();
 }
