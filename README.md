@@ -1,6 +1,5 @@
-Dart State Machine
-------------------
-[![Build Status](https://travis-ci.org/Workiva/state_machine.svg?branch=master)](https://travis-ci.org/Workiva/state_machine) [![codecov.io](http://codecov.io/github/Workiva/state_machine/coverage.svg?branch=master)](http://codecov.io/github/Workiva/state_machine?branch=master)
+# Dart State Machine
+[![Pub](https://img.shields.io/pub/v/state_machine.svg)](https://pub.dartlang.org/packages/state_machine) [![Build Status](https://travis-ci.org/Workiva/state_machine.svg?branch=master)](https://travis-ci.org/Workiva/state_machine) [![codecov.io](http://codecov.io/github/Workiva/state_machine/coverage.svg?branch=master)](http://codecov.io/github/Workiva/state_machine?branch=master)
 
 > Easily create a finite state machine and define legal state transitions. Listen to state entrances, departures, and transitions.
 
