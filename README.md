@@ -1,5 +1,6 @@
-Dart State Machine [![Build Status](https://travis-ci.org/Workiva/state_machine.svg?branch=master)](https://travis-ci.org/Workiva/state_machine)
+Dart State Machine
 ------------------
+[![Build Status](https://travis-ci.org/Workiva/state_machine.svg?branch=master)](https://travis-ci.org/Workiva/state_machine) [![codecov.io](http://codecov.io/github/Workiva/state_machine/coverage.svg?branch=master)](http://codecov.io/github/Workiva/state_machine?branch=master)
 
 > Easily create a finite state machine and define legal state transitions. Listen to state entrances, departures, and transitions.
 
@@ -184,3 +185,11 @@ obtainKey();
 unlock(); // true (not canceled)
 isUnlocked(); // true
 ```
+
+
+## Development
+
+This project leverages [the dart_dev package](https://github.com/Workiva/dart_dev)
+for most of its tooling needs, including static analysis, code formatting,
+running tests, collecting coverage, and serving examples. Check out the dart_dev
+readme for more information.
