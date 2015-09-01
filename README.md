@@ -114,7 +114,7 @@ turnOn(); // "Left: off"
           // "Entered: on"
 ```
 
-### Wildcard State & State Transitions
+### Wildcard State and State Transitions
 The `State` class exposes a static instance `State.any` that can be used as a wildcard when defining a state transition.
 
 ```dart
