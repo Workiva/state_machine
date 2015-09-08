@@ -42,7 +42,9 @@ openDoor() {
   querySelector('#door-frame').className = 'open';
 }
 
-illegalStateTransition(Element state) {
+illegalStateTransition(Element state, e) {
+  print('');
+  print(e);
   state.className += ' illegal';
   new Timer(new Duration(milliseconds: 100), () {
     state.className = 'state';
@@ -54,16 +56,25 @@ void main() {
 
   // Wire up state changes to DOM changes
   door.isClosed.onEnter.listen((StateChange change) {
+    print('');
+    print(change);
+    print(door);
     activateState(door.isClosed);
     closeDoor();
   });
 
   door.isLocked.onEnter.listen((StateChange change) {
+    print('');
+    print(change);
+    print(door);
     activateState(door.isLocked);
     lockDoor();
   });
 
   door.isOpen.onEnter.listen((StateChange change) {
+    print('');
+    print(change);
+    print(door);
     activateState(door.isOpen);
     openDoor();
   });
@@ -75,8 +86,8 @@ void main() {
   open.onClick.listen((event) {
     try {
       door.open();
-    } on IllegalStateTransition {
-      illegalStateTransition(open);
+    } on IllegalStateTransition catch (e) {
+      illegalStateTransition(open, e);
     }
   });
   close.onClick.listen((event) {
@@ -89,8 +100,19 @@ void main() {
   lock.onClick.listen((event) {
     try {
       door.lock();
-    } on IllegalStateTransition {
-      illegalStateTransition(lock);
+    } on IllegalStateTransition catch (e) {
+      illegalStateTransition(lock, e);
     }
   });
+
+  print(door);
+  print('');
+  print(door.isOpen);
+  print(door.isClosed);
+  print(door.isLocked);
+  print('');
+  print(door.open);
+  print(door.close);
+  print(door.lock);
+  print(door.unlock);
 }

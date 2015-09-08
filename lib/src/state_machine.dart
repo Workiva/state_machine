@@ -92,11 +92,13 @@ class State implements Function {
   /// the onLeave stream.
   StreamController _onLeaveController;
 
-  State._(String this.name, StateMachine this._machine) {
+  State._(String this.name, StateMachine this._machine, {bool listenTo: true}) {
     _onEnterController = new StreamController();
     _onEnter = _onEnterController.stream.asBroadcastStream();
     _onLeaveController = new StreamController();
     _onLeave = _onLeaveController.stream.asBroadcastStream();
+
+    if (!listenTo) return;
 
     _machine.onStateChange.listen((StateChange stateChange) {
       if (stateChange.from == this) {
@@ -110,13 +112,9 @@ class State implements Function {
     });
   }
 
-  State._wildcard() {
-    name = '__wildcard__';
-    _onEnterController = new StreamController();
-    _onEnter = _onEnterController.stream.asBroadcastStream();
-    _onLeaveController = new StreamController();
-    _onLeave = _onLeaveController.stream.asBroadcastStream();
-  }
+  State._none(StateMachine machine) : this._('__none__', machine);
+
+  State._wildcard() : this._('__wildcard__', null, listenTo: false);
 
   /// Stream of enter events. Enter event occurs every time
   /// the machine enters this state.
@@ -129,6 +127,15 @@ class State implements Function {
   /// Determine whether or not this [State] is active.
   bool call([_]) {
     return _machine.current == this;
+  }
+
+  @override
+  String toString() {
+    String name = this.name;
+    if (name == '__none__') {
+      name = 'none - state machine has yet to start';
+    }
+    return 'State: $name (active: ${this()}, machine: ${_machine.name})';
   }
 }
 
@@ -148,6 +155,17 @@ class StateChange {
   State to;
 
   StateChange._(State this.from, State this.to, this.payload);
+
+  @override
+  String toString() {
+    StringBuffer sb = new StringBuffer();
+    String fromName = from.name == '__none__' ? '(none)' : from.name;
+    sb.writeln('StateChange: ${fromName} --> ${to.name}');
+    if (payload != null) {
+      sb.writeln('    payload: $payload');
+    }
+    return sb.toString();
+  }
 }
 
 /// A simple, typed finite state machine.
@@ -186,6 +204,9 @@ class StateChange {
 /// states and the state transitions. See [State] and
 /// [StateTransition] for more information.
 class StateMachine {
+  /// Name of the state machine. Used for debugging.
+  String name;
+
   /// [State] that the machine is currently in.
   State get current => _current;
   State _current;
@@ -203,14 +224,17 @@ class StateMachine {
   /// and state transition listeners.
   Stream<StateChange> _stateChangeStream;
 
-  StateMachine() {
+  /// List of states created by for this machine.
+  List<State> _states = [];
+
+  StateMachine(String this.name) {
     _stateChangeController = new StreamController();
     _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
 
     /// Start the machine in a temporary state.
     /// This allows an initial state transition to occur
     /// when the machine is started via [start].
-    _current = new State._('__none__', this);
+    _current = new State._none(this);
   }
 
   /// Stream of state change events. This allows [State]s
@@ -226,7 +250,9 @@ class StateMachine {
   State newState(String name) {
     if (_started) throw new IllegalStateMachineMutation(
         'Cannot create new state ($name) once the machine has been started.');
-    return new State._(name, this);
+    State state = new State._(name, this);
+    _states.add(state);
+    return state;
   }
 
   /// Create a new [StateTransition] for this [StateMachine].
@@ -239,6 +265,20 @@ class StateMachine {
     if (_started) throw new IllegalStateMachineMutation(
         'Cannot create new state transition ($name) once the machine has been started.');
     return new StateTransition._(name, this, from, to);
+  }
+
+  @override
+  String toString() {
+    StringBuffer sb = new StringBuffer();
+    sb.writeln('StateMachine: $name');
+    _states.forEach((state) {
+      if (state()) {
+        sb.writeln(' >> ${state.name} (active)');
+      } else {
+        sb.writeln('    ${state.name}');
+      }
+    });
+    return sb.toString();
   }
 
   /// Start the state machine at the given starting state.
@@ -413,5 +453,14 @@ class StateTransition implements Function {
   /// transition will be canceled.
   void cancelIf(bool test(StateChange stateChange)) {
     _cancelTests.add(test);
+  }
+
+  @override
+  String toString() {
+    StringBuffer sb = new StringBuffer();
+    sb.writeln('StateTransition: $name (machine: ${_machine.name})');
+    sb.writeln('    from: ${_from.map((f) => f.name).join(', ')}');
+    sb.writeln('    to: ${_to.name}');
+    return sb.toString();
   }
 }

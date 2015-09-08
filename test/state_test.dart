@@ -27,7 +27,7 @@ void main() {
     StateTransition turnOn;
 
     setUp(() {
-      machine = new StateMachine();
+      machine = new StateMachine('machine');
       isOn = machine.newState('on');
       isOff = machine.newState('off');
       turnOn = machine.newStateTransition('turnOn', [isOff], isOn);
@@ -60,6 +60,28 @@ void main() {
       expect(isOff(), isTrue);
       turnOn();
       expect(isOn(), isTrue);
+    });
+
+    test('.toString() should provide a helpful result', () async {
+      machine.start(isOn);
+      await isOn.onEnter.first;
+
+      String isOnStr = isOn.toString();
+      expect(isOnStr, contains(isOn.name));
+      expect(isOnStr, contains(machine.name));
+      expect(isOnStr, contains('active: true'));
+
+      String isOffStr = isOff.toString();
+      expect(isOffStr, contains(isOff.name));
+      expect(isOffStr, contains(machine.name));
+      expect(isOffStr, contains('active: false'));
+    });
+
+    test('.toString() should explain what the __none__ state means', () {
+      State noneState = machine.current;
+      String s = noneState.toString();
+      expect(s, contains('machine has yet to start'));
+      expect(s, isNot(contains('__none__')));
     });
   });
 }
