@@ -91,10 +91,14 @@ void main() {
     }
   });
   close.onClick.listen((event) {
-    if (door.isLocked()) {
-      door.unlock();
-    } else {
-      door.close();
+    try {
+      if (door.isLocked()) {
+        door.unlock();
+      } else {
+        door.close();
+      }
+    } on IllegalStateTransition catch (e) {
+      illegalStateTransition(close, e);
     }
   });
   lock.onClick.listen((event) {
