@@ -248,8 +248,9 @@ class StateMachine {
   ///
   /// [name] helps identify the state for debugging purposes.
   State newState(String name) {
-    if (_started) throw new IllegalStateMachineMutation(
-        'Cannot create new state ($name) once the machine has been started.');
+    if (_started)
+      throw new IllegalStateMachineMutation(
+          'Cannot create new state ($name) once the machine has been started.');
     State state = new State._(name, this);
     _states.add(state);
     return state;
@@ -262,8 +263,9 @@ class StateMachine {
   /// is in one of the states listed in [from]. When this transition
   /// occurs, this [StateMachine] will move to the [to] state.
   StateTransition newStateTransition(String name, List<State> from, State to) {
-    if (_started) throw new IllegalStateMachineMutation(
-        'Cannot create new state transition ($name) once the machine has been started.');
+    if (_started)
+      throw new IllegalStateMachineMutation(
+          'Cannot create new state transition ($name) once the machine has been started.');
     return new StateTransition._(name, this, from, to);
   }
 
@@ -403,8 +405,9 @@ class StateTransition implements Function {
 
   StateTransition._(String this.name, StateMachine this._machine,
       List<State> this._from, State this._to) {
-    if (_to == State.any) throw new ArgumentError(
-        'Cannot transition to the wildcard state "State.any"');
+    if (_to == State.any)
+      throw new ArgumentError(
+          'Cannot transition to the wildcard state "State.any"');
     _streamController = new StreamController();
     _stream = _streamController.stream.asBroadcastStream();
   }
