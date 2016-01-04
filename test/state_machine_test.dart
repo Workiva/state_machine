@@ -24,12 +24,10 @@ void main() {
   group('StateMachine', () {
     StateMachine machine;
     State state;
-    State otherState;
 
     setUp(() {
       machine = new StateMachine('machine');
       state = machine.newState('state');
-      otherState = machine.newState('other');
     });
 
     test('should be in a dummy state until the machine has been started', () {
