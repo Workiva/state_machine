@@ -1,0 +1,12 @@
+project: dart
+language: dart
+
+# dart 1.19.1
+runner_image: drydock-prod.workiva.org/workiva/smithy-runner-generator:92530
+
+script:
+  - pub get
+
+artifacts:
+  build:
+    - ./pubspec.lock
