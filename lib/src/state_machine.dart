@@ -104,7 +104,8 @@ class State extends Disposable implements Function {
 
     if (!listenTo) return;
 
-    manageStreamSubscription(_machine.onStateChange.listen((StateChange stateChange) {
+    manageStreamSubscription(
+        _machine.onStateChange.listen((StateChange stateChange) {
       if (stateChange.from == this) {
         // Left this state. Notify listeners.
         _onLeaveController.add(stateChange);
@@ -207,7 +208,7 @@ class StateChange {
 /// Once initialized, the state machine is driven by the
 /// states and the state transitions. See [State] and
 /// [StateTransition] for more information.
-class StateMachine extends Disposable{
+class StateMachine extends Disposable {
   /// Name of the state machine. Used for debugging.
   String name;
 
