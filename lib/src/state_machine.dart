@@ -17,6 +17,7 @@ library state_machine.src.state_machine;
 import 'dart:async';
 
 import 'package:state_machine/src/exceptions.dart';
+import 'package:w_common/disposable.dart';
 
 /// Represents a state that can be visited within a
 /// [StateMachine] instance.
@@ -65,7 +66,7 @@ import 'package:state_machine/src/exceptions.dart';
 /// ("open" or "secure", for example).
 /// 2. It reads better when calling the state to determine if it's active,
 /// as demonstrated above when calling `isOpen()` and `isClosed()`.
-class State implements Function {
+class State extends Disposable implements Function {
   /// Wildcard state that should be used to define state transitions
   /// that allow transitioning from any state.
   static State any = new State._wildcard();
@@ -78,19 +79,19 @@ class State implements Function {
 
   /// Stream of onEnter events from [_onEnterController]
   /// as a broadcast stream.
-  Stream _onEnter;
+  Stream<StateChange> _onEnter;
 
   /// Stream controller used internally to create
   /// the onEnter stream.
-  StreamController _onEnterController;
+  StreamController<StateChange> _onEnterController;
 
   /// Stream of onLeave events from [_onLeaveController]
   /// as a broadcast stream.
-  Stream _onLeave;
+  Stream<StateChange> _onLeave;
 
   /// Stream controller used internally to create
   /// the onLeave stream.
-  StreamController _onLeaveController;
+  StreamController<StateChange> _onLeaveController;
 
   State._(String this.name, StateMachine this._machine, {bool listenTo: true}) {
     _onEnterController = new StreamController();
@@ -98,9 +99,12 @@ class State implements Function {
     _onLeaveController = new StreamController();
     _onLeave = _onLeaveController.stream.asBroadcastStream();
 
+    manageStreamController(_onEnterController);
+    manageStreamController(_onLeaveController);
+
     if (!listenTo) return;
 
-    _machine.onStateChange.listen((StateChange stateChange) {
+    manageStreamSubscription(_machine.onStateChange.listen((StateChange stateChange) {
       if (stateChange.from == this) {
         // Left this state. Notify listeners.
         _onLeaveController.add(stateChange);
@@ -109,7 +113,7 @@ class State implements Function {
         // Entered this state. Notify listeners.
         _onEnterController.add(stateChange);
       }
-    });
+    }));
   }
 
   State._none(StateMachine machine) : this._('__none__', machine);
@@ -203,7 +207,7 @@ class StateChange {
 /// Once initialized, the state machine is driven by the
 /// states and the state transitions. See [State] and
 /// [StateTransition] for more information.
-class StateMachine {
+class StateMachine extends Disposable{
   /// Name of the state machine. Used for debugging.
   String name;
 
@@ -218,7 +222,7 @@ class StateMachine {
 
   /// Stream controller used internally to control the
   /// state change stream.
-  StreamController _stateChangeController;
+  StreamController<StateChange> _stateChangeController;
 
   /// Stream of state changes used internally to notify state
   /// and state transition listeners.
@@ -229,12 +233,14 @@ class StateMachine {
 
   StateMachine(String this.name) {
     _stateChangeController = new StreamController();
+    manageStreamController(_stateChangeController);
     _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
 
     /// Start the machine in a temporary state.
     /// This allows an initial state transition to occur
     /// when the machine is started via [start].
     _current = new State._none(this);
+    manageDisposable(_current);
   }
 
   /// Stream of state change events. This allows [State]s
@@ -252,6 +258,7 @@ class StateMachine {
       throw new IllegalStateMachineMutation(
           'Cannot create new state ($name) once the machine has been started.');
     State state = new State._(name, this);
+    manageDisposable(state);
     _states.add(state);
     return state;
   }
@@ -266,7 +273,9 @@ class StateMachine {
     if (_started)
       throw new IllegalStateMachineMutation(
           'Cannot create new state transition ($name) once the machine has been started.');
-    return new StateTransition._(name, this, from, to);
+    StateTransition newTransition = new StateTransition._(name, this, from, to);
+    manageDisposable(newTransition);
+    return newTransition;
   }
 
   @override
@@ -293,6 +302,7 @@ class StateMachine {
   /// Set the machine state and trigger a state change event.
   void _transition(StateChange stateChange) {
     _current = stateChange.to;
+    manageDisposable(_current);
     _stateChangeController.add(stateChange);
   }
 }
@@ -375,7 +385,7 @@ class StateMachine {
 ///     plugIn();
 ///     turnOn(); // "Light is on!"
 ///     unplug(); // "Light is off :("
-class StateTransition implements Function {
+class StateTransition extends Disposable implements Function {
   /// Name of the state transition. Used for debugging.
   String name;
 
@@ -409,6 +419,7 @@ class StateTransition implements Function {
       throw new ArgumentError(
           'Cannot transition to the wildcard state "State.any"');
     _streamController = new StreamController();
+    manageStreamController(_streamController);
     _stream = _streamController.stream.asBroadcastStream();
   }
 
@@ -418,8 +429,10 @@ class StateTransition implements Function {
   /// [onData] will be called with the [State] that was transitioned from.
   StreamSubscription listen(void onTransition(StateChange stateChange),
       {Function onError, void onDone(), bool cancelOnError}) {
-    return _stream.listen(onTransition,
+    final streamSubscription = _stream.listen(onTransition,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+    manageStreamSubscription(streamSubscription);
+    return streamSubscription;
   }
 
   /// Execute this transition. Will call any tests registered

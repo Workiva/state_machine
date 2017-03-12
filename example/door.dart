@@ -15,11 +15,12 @@
 library state_machine.example.door;
 
 import 'package:state_machine/state_machine.dart';
+import 'package:w_common/disposable.dart';
 
-class Door {
+class Door extends Disposable{
   Door() {
     _machine = new StateMachine('door');
-
+    manageDisposable(_machine);
     isClosed = _machine.newState('closed');
     isLocked = _machine.newState('locked');
     isOpen = _machine.newState('open');

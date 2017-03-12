@@ -7,6 +7,9 @@ authors:
   - Max Peterson <maxwell.peterson@workiva.com>
   - Trent Grover <trent.grover@workiva.com>
 homepage: https://github.com/Workiva/state_machine
+
+dependencies:
+  w_common: ^1.2.0
 dev_dependencies:
   browser: "^0.10.0"
   coverage: "^0.7.3"
