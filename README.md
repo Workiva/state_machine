@@ -17,7 +17,7 @@ import 'package:state_machine/state_machine.dart';
 Once created, the `StateMachine` will be used to create states and state transitions.
 
 ```dart
-StateMachine light = new StateMachine();
+StateMachine light = new StateMachine('light');
 ```
 
 ### Define a Set of States
@@ -121,7 +121,7 @@ turnOn(); // "Left: off"
 The `State` class exposes a static instance `State.any` that can be used as a wildcard when defining a state transition.
 
 ```dart
-StateMachine machine = new StateMachine();
+StateMachine machine = new StateMachine('machine');
 State isFailed = machine.newState('failed');
 
 // This transition will be valid regardless of which state the machine is in.
@@ -134,7 +134,7 @@ states in order to execute the transition. If that's not the case, an `IllegalSt
 
 ```dart
 // Consider a door with the following states and transitions.
-StateMachine door = new StateMachine();
+StateMachine door = new StateMachine('door');
 
 State isOpen = door.newState('open');
 State isClosed = door.newState('closed');
@@ -164,12 +164,12 @@ To handle this, state transitions support cancellation conditions.
 // Consider two state machines - a person and a door.
 // The door can be locked or unlocked and the person
 // can be with or without a key.
-StateMachine door = new StateMachine();
+StateMachine door = new StateMachine('door');
 State isLocked = door.newState('locked');
 State isUnlocked = door.newState('unlocked');
 StateTransition unlock = door.newStateTransition('unlock', [isLocked], isUnlocked);
 
-StateMachine person = new StateMachine();
+StateMachine person = new StateMachine('person');
 State isWithKey = person.newState('withKey');
 State isWithoutKey = person.newState('withoutKey');
 StateTransition obtainKey = person.newStateTransition('obtainKey', [isWithoutKey], isWithKey);
