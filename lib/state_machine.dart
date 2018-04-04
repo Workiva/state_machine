@@ -24,7 +24,7 @@
 ///
 /// Simple usage:
 ///
-///     StateMachine door = new StateMachine();
+///     StateMachine door = new StateMachine('door');
 ///     State isOpen = door.newState('open');
 ///     State isClosed = door.newState('closed');
 ///     StateTransition open = door.newStateTransition('open', [isClosed], isOpen);
@@ -46,7 +46,7 @@
 ///       StateMachine _machine;
 ///
 ///       Door() {
-///         _machine = new StateMachine();
+///         _machine = new StateMachine('door');
 ///         isOpen = _machine.newState('open');
 ///         isClosed = _machine.newState('closed');
 ///         open = _machine.newStateTransition('open', [isClosed], isOpen);

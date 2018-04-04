@@ -24,7 +24,7 @@ import 'package:w_common/disposable.dart';
 ///
 /// States must be created from a [StateMachine] instance:
 ///
-///     StateMachine door = new StateMachine();
+///     StateMachine door = new StateMachine('door');
 ///
 ///     State isOpen = door.newState('open');
 ///     State isClosed = door.newState('closed');
@@ -184,7 +184,7 @@ class StateChange {
 /// To demonstrate:
 ///
 ///     // 1.
-///     StateMachine machine = new StateMachine();
+///     StateMachine machine = new StateMachine('switch');
 ///
 ///     // 2.
 ///     State isOn = machine.newState('on');
@@ -315,7 +315,7 @@ class StateMachine extends Disposable {
 /// state. The machine must be in one of the "from" states in order
 /// for this transition to occur.
 ///
-///     StateMachine door = new StateMachine();
+///     StateMachine door = new StateMachine('door');
 ///
 ///     State isOpen = door.newState('open');
 ///     State isClosed = door.newState('closed');
@@ -353,13 +353,13 @@ class StateMachine extends Disposable {
 /// the following example that integrates two separate state machines
 /// to represent the state of a lamp.
 ///
-///     StateMachine powerCord = new StateMachine();
+///     StateMachine powerCord = new StateMachine('powerCord');
 ///     State isPluggedIn = powerCord.newState('pluggedIn');
 ///     State isUnplugged = powerCord.newState('unplugged');
 ///     StateTransition plugIn = powerCord.newStateTransition('plugIn', [isUnplugged], isPluggedIn);
 ///     StateTransition unplug = powerCord.newStateTransition('unplug', [isPluggedIn], isUnplugged);
 ///
-///     StateMachine lamp = new StateMachine();
+///     StateMachine lamp = new StateMachine('lamp');
 ///     State isOn = lamp.newState('on');
 ///     State isOff = lamp.newState('off');
 ///     StateTransition turnOn = lamp.newStateTransition('turnOn', [isOff], isOn);
