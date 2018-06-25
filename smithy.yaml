@@ -8,7 +8,13 @@ before_script:
   - dart --version
 
 script:
+  - dart --version
   - pub get
+  - pub run dependency_validator -i abide,coverage,dart_style,dartdoc,semver_audit
+  - pub run abide
+  - pub run dart_dev format --check
+  - pub run dart_dev analyze
+  - pub run semver_audit report --repo Workiva/state_machine
 
 artifacts:
   dart-dependencies: # For RM dependency tracking

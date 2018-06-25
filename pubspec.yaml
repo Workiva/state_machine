@@ -11,11 +11,22 @@ homepage: https://github.com/Workiva/state_machine
 dependencies:
   w_common: ^1.2.0
 dev_dependencies:
+  abide:
+    hosted:
+      name: abide
+      url: https://pub.workiva.org
+    version: ^1.3.1
   browser: "^0.10.0"
   coverage: "^0.7.3"
   dart_dev: "^1.0.0"
   dart_style: "^0.2.0"
   dartdoc: "^0.8.0"
+  dependency_validator: ^1.1.0
+  semver_audit:
+    hosted:
+      name: semver_audit
+      url: https://pub.workiva.org
+    version: ^1.0.2
   test: "^0.12.3+2"
 environment:
   sdk: ">=1.24.2 <2.0.0"
