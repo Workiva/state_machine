@@ -2,11 +2,7 @@ project: dart
 language: dart
 
 # This image is created using https://github.com/Workiva/smithy-runner-generator
-<<<<<<< HEAD
-runner_image: drydock-prod.workiva.net/workiva/smithy-runner-generator:355624
-=======
 runner_image: drydock-prod.workiva.net/workiva/smithy-runner-generator:355624 # Dart 1.24.2
->>>>>>> AbideTest : Please Ignore
 
 before_script:
   - dart --version
@@ -14,7 +10,7 @@ before_script:
 script:
   - dart --version
   - pub get
-  - pub run dependency_validator -i abide,coverage,dart_style,dartdoc,semver_audit
+  - pub run dependency_validator -i abide,browser,coverage,dart_style,dartdoc,semver_audit
   - pub run abide
   - pub run dart_dev format --check
   - pub run dart_dev analyze
