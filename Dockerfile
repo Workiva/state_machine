@@ -26,6 +26,11 @@ RUN echo "Starting the before_script section" && \
 		echo "before_script section completed"
 RUN echo "Starting the script section" && \
 		pub get && \
+		pub run dependency_validator -i abide,browser,coverage,dart_style,dartdoc,semver_audit && \
+		pub run abide && \
+		pub run dart_dev format --check && \
+		pub run dart_dev analyze && \
+		pub run semver_audit report --repo Workiva/state_machine && \
 		echo "script section completed"
 ARG BUILD_ARTIFACTS_DART-DEPENDENCIES=/build/pubspec.lock
 FROM scratch

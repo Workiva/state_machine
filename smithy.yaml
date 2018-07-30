@@ -2,13 +2,19 @@ project: dart
 language: dart
 
 # This image is created using https://github.com/Workiva/smithy-runner-generator
-runner_image: drydock-prod.workiva.net/workiva/smithy-runner-generator:355624
+runner_image: drydock-prod.workiva.net/workiva/smithy-runner-generator:355624 # Dart 1.24.2
 
 before_script:
   - dart --version
 
 script:
+  - dart --version
   - pub get
+  - pub run dependency_validator -i abide,browser,coverage,dart_style,dartdoc,semver_audit
+  - pub run abide
+  - pub run dart_dev format --check
+  - pub run dart_dev analyze
+  - pub run semver_audit report --repo Workiva/state_machine
 
 artifacts:
   dart-dependencies: # For RM dependency tracking
