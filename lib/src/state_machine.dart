@@ -404,11 +404,11 @@ class StateTransition extends Disposable implements Function {
   /// Stream of transition events from [_streamController] as
   /// a broadcast stream. Transition event occurs every time
   /// this transition executes successfully.
-  Stream _stream;
+  Stream<StateChange> _stream;
 
   /// Stream controller used internally to create a stream of
   /// transition events.
-  StreamController _streamController;
+  StreamController<StateChange> _streamController;
 
   /// [State] to transition the machine to when executing
   /// this transition.
@@ -419,7 +419,7 @@ class StateTransition extends Disposable implements Function {
     if (_to == State.any)
       throw new ArgumentError(
           'Cannot transition to the wildcard state "State.any"');
-    _streamController = new StreamController();
+    _streamController = new StreamController<StateChange>();
     manageStreamController(_streamController);
     _stream = _streamController.stream.asBroadcastStream();
   }
