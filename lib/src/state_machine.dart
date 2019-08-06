@@ -67,6 +67,9 @@ import 'package:w_common/disposable.dart';
 /// 2. It reads better when calling the state to determine if it's active,
 /// as demonstrated above when calling `isOpen()` and `isClosed()`.
 class State extends Disposable implements Function {
+  @override
+  String get disposableTypeName => 'State';
+
   /// Wildcard state that should be used to define state transitions
   /// that allow transitioning from any state.
   static State any = new State._wildcard();
@@ -209,6 +212,9 @@ class StateChange {
 /// states and the state transitions. See [State] and
 /// [StateTransition] for more information.
 class StateMachine extends Disposable {
+  @override
+  String get disposableTypeName => 'StateMachine';
+
   /// Name of the state machine. Used for debugging.
   String name;
 
@@ -387,6 +393,9 @@ class StateMachine extends Disposable {
 ///     turnOn(); // "Light is on!"
 ///     unplug(); // "Light is off :("
 class StateTransition extends Disposable implements Function {
+  @override
+  String get disposableTypeName => 'StateTransition';
+
   /// Name of the state transition. Used for debugging.
   String name;
 
