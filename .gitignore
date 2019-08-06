@@ -1,7 +1,7 @@
 # Don’t commit the following directories created by pub.
 build/
 packages/
-packages
+.packages
 .buildlog
 .pub/
 pubspec.lock
@@ -22,3 +22,6 @@ dartdoc-viewer
 
 #don't commit screenshots from functional tests
 screenshots/
+
+#dont't commit files created by build
+.dart_tool/
