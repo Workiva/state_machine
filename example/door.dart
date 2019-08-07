@@ -18,6 +18,9 @@ import 'package:state_machine/state_machine.dart';
 import 'package:w_common/disposable.dart';
 
 class Door extends Disposable {
+  @override
+  String get disposableTypeName => 'Door';
+
   Door() {
     _machine = new StateMachine('door');
     manageDisposable(_machine);
