@@ -22,7 +22,7 @@ class Door extends Disposable {
   String get disposableTypeName => 'Door';
 
   Door() {
-    _machine = new StateMachine('door');
+    _machine = StateMachine('door');
     manageDisposable(_machine);
     isClosed = _machine.newState('closed');
     isLocked = _machine.newState('locked');

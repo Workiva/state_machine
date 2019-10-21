@@ -33,7 +33,7 @@ void main() {
     StateTransition unlock;
 
     setUp(() {
-      machine = new StateMachine('machine');
+      machine = StateMachine('machine');
 
       isBroken = machine.newState('broken');
       isClosed = machine.newState('closed');
@@ -55,7 +55,7 @@ void main() {
     });
 
     test('should allow listening', () async {
-      var c = new Completer();
+      var c = Completer();
       close.listen(c.complete);
       expect(close(), isTrue);
       expect((await c.future).from, equals(isOpen));
@@ -91,7 +91,7 @@ void main() {
 
     test('should allow transitioning from any state via the wildcard state',
         () async {
-      var c = new Completer();
+      var c = Completer();
       var fromStates = [];
       breakThrough.listen((StateChange stateChange) {
         fromStates.add(stateChange.from);
@@ -133,8 +133,8 @@ void main() {
 
     test('.toString() should provide a helpful result for the state change',
         () async {
-      Completer closeC = new Completer();
-      Completer openC = new Completer();
+      Completer closeC = Completer();
+      Completer openC = Completer();
 
       isOpen.onEnter.listen((stateChange) {
         // state change from the transition to initial starting state

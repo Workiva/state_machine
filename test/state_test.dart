@@ -27,7 +27,7 @@ void main() {
     StateTransition turnOn;
 
     setUp(() {
-      machine = new StateMachine('machine');
+      machine = StateMachine('machine');
       isOn = machine.newState('on');
       isOff = machine.newState('off');
       turnOn = machine.newStateTransition('turnOn', [isOff], isOn);
@@ -38,7 +38,7 @@ void main() {
     });
 
     test('should allow listening to onEnter event', () async {
-      var c = new Completer();
+      var c = Completer();
       isOn.onEnter.listen(c.complete);
       machine.start(isOff);
       turnOn();
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('should allow litening to onLeave event', () async {
-      var c = new Completer();
+      var c = Completer();
       isOff.onLeave.listen(c.complete);
       machine.start(isOff);
       turnOn();

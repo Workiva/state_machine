@@ -46,13 +46,13 @@ illegalStateTransition(Element state, e) {
   print('');
   print(e);
   state.className += ' illegal';
-  new Timer(new Duration(milliseconds: 100), () {
+  Timer(Duration(milliseconds: 100), () {
     state.className = 'state';
   });
 }
 
 void main() {
-  door = new Door();
+  door = Door();
 
   // Wire up state changes to DOM changes
   door.isClosed.onEnter.listen((StateChange change) {

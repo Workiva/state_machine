@@ -72,7 +72,7 @@ class State extends Disposable implements Function {
 
   /// Wildcard state that should be used to define state transitions
   /// that allow transitioning from any state.
-  static State any = new State._wildcard();
+  static State any = State._wildcard();
 
   /// Name of the state. Used for debugging.
   String name;
@@ -98,9 +98,9 @@ class State extends Disposable implements Function {
 
   State._(String this.name, StateMachine this._machine,
       {bool listenTo = true}) {
-    _onEnterController = new StreamController();
+    _onEnterController = StreamController();
     _onEnter = _onEnterController.stream.asBroadcastStream();
-    _onLeaveController = new StreamController();
+    _onLeaveController = StreamController();
     _onLeave = _onLeaveController.stream.asBroadcastStream();
 
     manageStreamController(_onEnterController);
@@ -167,7 +167,7 @@ class StateChange {
 
   @override
   String toString() {
-    StringBuffer sb = new StringBuffer();
+    StringBuffer sb = StringBuffer();
     String fromName = from.name == '__none__' ? '(none)' : from.name;
     sb.writeln('StateChange: ${fromName} --> ${to.name}');
     if (payload != null) {
@@ -240,14 +240,14 @@ class StateMachine extends Disposable {
   List<State> _states = [];
 
   StateMachine(String this.name) {
-    _stateChangeController = new StreamController();
+    _stateChangeController = StreamController();
     manageStreamController(_stateChangeController);
     _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
 
     /// Start the machine in a temporary state.
     /// This allows an initial state transition to occur
     /// when the machine is started via [start].
-    _current = new State._none(this);
+    _current = State._none(this);
     manageDisposable(_current);
   }
 
@@ -263,9 +263,9 @@ class StateMachine extends Disposable {
   /// [name] helps identify the state for debugging purposes.
   State newState(String name) {
     if (_started)
-      throw new IllegalStateMachineMutation(
+      throw IllegalStateMachineMutation(
           'Cannot create new state ($name) once the machine has been started.');
-    State state = new State._(name, this);
+    State state = State._(name, this);
     manageDisposable(state);
     _states.add(state);
     return state;
@@ -279,16 +279,16 @@ class StateMachine extends Disposable {
   /// occurs, this [StateMachine] will move to the [to] state.
   StateTransition newStateTransition(String name, List<State> from, State to) {
     if (_started)
-      throw new IllegalStateMachineMutation(
+      throw IllegalStateMachineMutation(
           'Cannot create new state transition ($name) once the machine has been started.');
-    StateTransition newTransition = new StateTransition._(name, this, from, to);
+    StateTransition newTransition = StateTransition._(name, this, from, to);
     manageDisposable(newTransition);
     return newTransition;
   }
 
   @override
   String toString() {
-    StringBuffer sb = new StringBuffer();
+    StringBuffer sb = StringBuffer();
     sb.writeln('StateMachine: $name');
     _states.forEach((state) {
       if (state()) {
@@ -302,9 +302,9 @@ class StateMachine extends Disposable {
 
   /// Start the state machine at the given starting state.
   void start(State startingState) {
-    if (_started) throw new StateError('Machine has already been started.');
+    if (_started) throw StateError('Machine has already been started.');
     _started = true;
-    _transition(new StateChange._(current, startingState, null));
+    _transition(StateChange._(current, startingState, null));
   }
 
   /// Set the machine state and trigger a state change event.
@@ -427,9 +427,9 @@ class StateTransition extends Disposable implements Function {
   StateTransition._(String this.name, StateMachine this._machine,
       List<State> this._from, State this._to) {
     if (_to == State.any)
-      throw new ArgumentError(
+      throw ArgumentError(
           'Cannot transition to the wildcard state "State.any"');
-    _streamController = new StreamController<StateChange>();
+    _streamController = StreamController<StateChange>();
     manageStreamController(_streamController);
     _stream = _streamController.stream.asBroadcastStream();
   }
@@ -454,11 +454,11 @@ class StateTransition extends Disposable implements Function {
   /// Returns true if the transition succeeded, false
   /// if it was canceled.
   bool call([payload]) {
-    StateChange stateChange = new StateChange._(_machine.current, _to, payload);
+    StateChange stateChange = StateChange._(_machine.current, _to, payload);
 
     // Verify the transition is valid from the current state.
     if (!_from.contains(stateChange.from) && !_from.contains(State.any)) {
-      throw new IllegalStateTransition(this, stateChange.from, stateChange.to);
+      throw IllegalStateTransition(this, stateChange.from, stateChange.to);
     }
 
     // Allow transition to be canceled.
@@ -484,7 +484,7 @@ class StateTransition extends Disposable implements Function {
 
   @override
   String toString() {
-    StringBuffer sb = new StringBuffer();
+    StringBuffer sb = StringBuffer();
     sb.writeln('StateTransition: $name (machine: ${_machine.name})');
     sb.writeln('    from: ${_from.map((f) => f.name).join(', ')}');
     sb.writeln('    to: ${_to.name}');
