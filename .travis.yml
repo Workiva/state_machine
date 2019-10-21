@@ -1,13 +1,24 @@
 language: dart
 sudo: required
-dart:
-  - 1.24.3
-  - stable
+
 addons:
   chrome: stable
-script:
-  - pub get
-  - pub run dart_dev analyze
-  - pub run dart_dev format --check
-  - pub run dart_dev test -p vm -p chrome
-  - pub run dart_dev test --release -p chrome
+
+jobs:
+  include:
+    - dart: 2.4.1
+      name: "SDK: 2.4.1"
+      script:
+        - pub run dart_dev analyze
+        - pub run dart_dev test -p vm -p chrome
+    - dart: stable
+      name: "SDK: stable"
+      script:
+        - pub run dart_dev analyze
+        - pub run dart_dev format --check
+        - pub run dart_dev test -p vm -p chrome
+    - dart: dev
+      name: "SDK: dev"
+      script:
+        - pub run dart_dev analyze
+        - pub run dart_dev test -p vm -p chrome
