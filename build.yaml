@@ -13,4 +13,4 @@ targets:
             - "example/**.dart"
         release_options:
           dart2js_args:
-            - --no-minify 
+            - --no-minify
