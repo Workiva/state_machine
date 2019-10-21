@@ -12,17 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-library tool.dev;
+import 'package:dart_dev/dart_dev.dart';
 
-import 'package:dart_dev/dart_dev.dart' show dev, config;
-
-main(List<String> args) async {
-  // https://github.com/Workiva/dart_dev
-
-  var directories = ['example/', 'lib/', 'test/', 'tool/'];
-  config.analyze.entryPoints = ['example', 'lib/', 'test/', 'tool/'];
-  config.copyLicense.directories = directories;
-  config.format.directories = directories;
-
-  await dev(args);
-}
+final config = {
+  ...coreConfig,
+  'serve': WebdevServeTool()..webdevArgs = ['example:8080']
+};
