@@ -1,7 +1,6 @@
-FROM google/dart:1.24.3
+FROM google/dart:2.4.1
 
 WORKDIR /build/
 ADD pubspec.yaml /build
 RUN pub get
-ARG BUILD_ARTIFACTS_BUILD=/build/pubspec.lock
 FROM scratch
