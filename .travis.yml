@@ -10,15 +10,15 @@ jobs:
       name: "SDK: 2.4.1"
       script:
         - pub run dart_dev analyze
-        - pub run dart_dev test -p vm -p chrome
+        - pub run dart_dev test
     - dart: stable
       name: "SDK: stable"
       script:
         - pub run dart_dev analyze
         - pub run dart_dev format --check
-        - pub run dart_dev test -p vm -p chrome
+        - pub run dart_dev test
     - dart: dev
       name: "SDK: dev"
       script:
         - pub run dart_dev analyze
-        - pub run dart_dev test -p vm -p chrome
+        - pub run dart_dev test
