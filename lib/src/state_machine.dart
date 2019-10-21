@@ -96,7 +96,8 @@ class State extends Disposable implements Function {
   /// the onLeave stream.
   StreamController<StateChange> _onLeaveController;
 
-  State._(String this.name, StateMachine this._machine, {bool listenTo: true}) {
+  State._(String this.name, StateMachine this._machine,
+      {bool listenTo = true}) {
     _onEnterController = new StreamController();
     _onEnter = _onEnterController.stream.asBroadcastStream();
     _onLeaveController = new StreamController();
