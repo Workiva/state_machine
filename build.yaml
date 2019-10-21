@@ -1,0 +1,16 @@
+  
+targets:
+  $default:
+    builders:
+      build_vm_compilers|entrypoint:
+        generate_for:
+          include:
+            - "test/**.dart.vm_test.dart"
+      build_web_compilers|entrypoint:
+        generate_for:
+          include:
+            - "test/**.dart.browser_test.dart"
+            - "example/**.dart"
+        release_options:
+          dart2js_args:
+            - --no-minify 
