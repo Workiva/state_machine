@@ -108,8 +108,7 @@ class State extends Disposable implements Function {
 
     if (!listenTo) return;
 
-    manageStreamSubscription(
-        _machine.onStateChange.listen((StateChange stateChange) {
+    listenToStream(_machine.onStateChange, (StateChange stateChange) {
       if (stateChange.from == this) {
         // Left this state. Notify listeners.
         _onLeaveController.add(stateChange);
@@ -118,7 +117,7 @@ class State extends Disposable implements Function {
         // Entered this state. Notify listeners.
         _onEnterController.add(stateChange);
       }
-    }));
+    });
   }
 
   State._none(StateMachine machine) : this._('__none__', machine);
@@ -440,9 +439,8 @@ class StateTransition extends Disposable implements Function {
   /// [onData] will be called with the [State] that was transitioned from.
   StreamSubscription listen(void onTransition(StateChange stateChange),
       {Function onError, void onDone(), bool cancelOnError}) {
-    final streamSubscription = _stream.listen(onTransition,
+    final streamSubscription = listenToStream(_stream, onTransition,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
-    manageStreamSubscription(streamSubscription);
     return streamSubscription;
   }
 
