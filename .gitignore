@@ -2,7 +2,6 @@
 build/
 packages/
 .packages
-.buildlog
 pubspec.lock
 
 # Or the files created by dart2js.
