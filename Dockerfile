@@ -1,4 +1,4 @@
-FROM google/dart:2.4.1
+FROM drydock.workiva.net/workiva/dart2_base_image:1
 
 WORKDIR /build/
 ADD pubspec.yaml /build
