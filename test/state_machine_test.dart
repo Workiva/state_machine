@@ -26,7 +26,7 @@ void main() {
     State state;
 
     setUp(() {
-      machine = new StateMachine('machine');
+      machine = StateMachine('machine');
       state = machine.newState('state');
     });
 
@@ -42,7 +42,7 @@ void main() {
     test(
         'should fire the onEnter event for the starting state when the machine starts',
         () async {
-      var c = new Completer();
+      var c = Completer();
       state.onEnter.listen(c.complete);
       machine.start(state);
       await c.future;

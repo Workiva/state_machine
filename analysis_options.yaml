@@ -1,6 +1,3 @@
-analyzer:
-  strong-mode: true
-
 linter:
   rules:
 #    - always_declare_return_types
@@ -19,7 +16,7 @@ linter:
 #    - empty_constructor_bodies
 #    - empty_statements
 #    - hash_and_equals
-#    - invariant_boolean
+#    - invariant_booleans
 #    - iterable_contains_unrelated_type
 #    - library_names
 #    - library_prefixes
@@ -38,13 +35,12 @@ linter:
 #    - slash_for_doc_comments
 #    - sort_constructors_first
 #    - sort_unnamed_constructors_first
-#    - super_goes_last
 #    - test_types_in_equals
 #    - throw_in_finally
 #    - type_annotate_public_apis
 #    - type_init_formals
 #    - unawaited_futures
-#    - unnecessary_brace_in_string_interp
+#    - unnecessary_brace_in_string_interps
 #    - unnecessary_getters_setters
 #    - unrelated_type_equality_checks
 #    - valid_regexps
