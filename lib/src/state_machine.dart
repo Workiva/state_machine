@@ -415,6 +415,10 @@ class StateTransition extends Disposable implements Function {
   /// this transition executes successfully.
   Stream<StateChange> _stream;
 
+  /// Stream of transition events. A transition event occurs every time this
+  /// transition executes successfully.
+  Stream<StateChange> get stream => _stream;
+
   /// Stream controller used internally to create a stream of
   /// transition events.
   StreamController<StateChange> _streamController;
@@ -437,6 +441,7 @@ class StateTransition extends Disposable implements Function {
   /// this transition executes successfully.
   ///
   /// [onData] will be called with the [State] that was transitioned from.
+  @Deprecated('Listen to \'stream\' directly')
   StreamSubscription listen(void onTransition(StateChange stateChange),
       {Function onError, void onDone(), bool cancelOnError}) {
     final streamSubscription = listenToStream(_stream, onTransition,
