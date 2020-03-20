@@ -22,3 +22,5 @@ screenshots/
 
 #dont't commit files created by build
 .dart_tool/
+
+.idea/
