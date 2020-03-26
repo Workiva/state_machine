@@ -14,7 +14,6 @@
 
 library state_machine.example.door_example;
 
-import 'dart:async';
 import 'dart:html';
 
 import 'package:state_machine/state_machine.dart';
@@ -40,15 +39,6 @@ lockDoor() {
 
 openDoor() {
   querySelector('#door-frame').className = 'open';
-}
-
-illegalStateTransition(Element state, e) {
-  print('');
-  print(e);
-  state.className += ' illegal';
-  Timer(Duration(milliseconds: 100), () {
-    state.className = 'state';
-  });
 }
 
 void main() {
@@ -84,29 +74,17 @@ void main() {
   var close = querySelector('#closed');
   var lock = querySelector('#locked');
   open.onClick.listen((event) {
-    try {
-      door.open();
-    } on IllegalStateTransition catch (e) {
-      illegalStateTransition(open, e);
-    }
+    door.open();
   });
   close.onClick.listen((event) {
-    try {
-      if (door.isLocked()) {
-        door.unlock();
-      } else {
-        door.close();
-      }
-    } on IllegalStateTransition catch (e) {
-      illegalStateTransition(close, e);
+    if (door.isLocked()) {
+      door.unlock();
+    } else {
+      door.close();
     }
   });
   lock.onClick.listen((event) {
-    try {
-      door.lock();
-    } on IllegalStateTransition catch (e) {
-      illegalStateTransition(lock, e);
-    }
+    door.lock();
   });
 
   print(door);

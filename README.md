@@ -130,7 +130,7 @@ StateTransition fail = machine.newStateTransition('fail', [State.any], isFailed)
 
 ### Illegal State Transitions
 When you create state transitions, you must define the list of valid "from" states. The machine must be in one of these
-states in order to execute the transition. If that's not the case, an `IllegalStateTransition` exception will be thrown.
+states in order to execute the transition. If that's not the case, the transition will not take place.
 
 ```dart
 // Consider a door with the following states and transitions.
@@ -151,8 +151,8 @@ close();
 lock();
 
 // In order to open the door, we must first unlock it.
-// If we try to open it first, an exception will be thrown.
-open(); // throws IllegalStateTransition
+// If we try to open it first, the transition will not take place.
+open(); // Won't affect the state.
 ```
 
 ### Canceling State Transitions

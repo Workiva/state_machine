@@ -461,7 +461,7 @@ class StateTransition extends Disposable implements Function {
 
     // Verify the transition is valid from the current state.
     if (!_from.contains(stateChange.from) && !_from.contains(State.any)) {
-      throw IllegalStateTransition(this, stateChange.from, stateChange.to);
+      return false;
     }
 
     // Allow transition to be canceled.
