@@ -83,5 +83,16 @@ void main() {
       expect(s, contains('machine has yet to start'));
       expect(s, isNot(contains('__none__')));
     });
+
+    test('canCall should return accordingly', () async {
+      var c = Completer();
+      isOff.onLeave.listen(c.complete);
+      machine.start(isOff);
+      expect(turnOn.canCall(), isTrue);
+      turnOn();
+      expect(isOn(), isTrue);
+      expect((await c.future).to, equals(isOn));
+      expect(turnOn.canCall(), isFalse);
+    });
   });
 }

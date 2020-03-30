@@ -449,6 +449,32 @@ class StateTransition extends Disposable implements Function {
     return streamSubscription;
   }
 
+  /// Execute all the pre-checks to understand
+  /// if a transition can take place or not.
+  /// Will call any tests registered via [cancelIf],
+  /// canceling the transition if any test
+  /// returns true.
+  ///
+  /// Returns true if transition can be executed,
+  /// false if it's not possible.
+  bool canCall([payload]) {
+    StateChange stateChange = StateChange._(_machine.current, _to, payload);
+
+    // Verify the transition is valid from the current state.
+    if (!_from.contains(stateChange.from) && !_from.contains(State.any)) {
+      return false;
+    }
+
+    // Allow transition to be canceled.
+    for (int i = 0; i < _cancelTests.length; i++) {
+      if (_cancelTests[i](stateChange)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   /// Execute this transition. Will call any tests registered
   /// via [cancelIf], canceling the transition if any test
   /// returns true. Otherwise, the transition will occur
