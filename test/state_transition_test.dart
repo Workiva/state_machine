@@ -66,8 +66,8 @@ void main() {
       expect(close(), isTrue);
       // door is closed, so lock() should succeed
       expect(lock(), isTrue);
-      // door is not open, so close() should fail
-      expect(() => close(), throwsException);
+      // door is not open, so close() should not be performed
+      expect(close(), isFalse);
     });
 
     test('should allow cancellation', () {
@@ -103,19 +103,6 @@ void main() {
       breakThrough();
       await c.future;
       expect(fromStates, equals([isOpen, isBroken]));
-    });
-
-    test('should throw an IllegalStateTransition if transition is illegal', () {
-      lock();
-      var error;
-      try {
-        close();
-      } on IllegalStateTransition catch (e) {
-        error = e;
-      }
-      expect(error, isNotNull);
-      expect(error.message.contains('("close")'), isTrue);
-      expect(error.toString().contains('from "locked" to "closed"'), isTrue);
     });
 
     test('.toString() should provide a helpful result', () {

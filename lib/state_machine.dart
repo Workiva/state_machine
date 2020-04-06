@@ -66,7 +66,6 @@
 ///     }
 library state_machine;
 
-export 'src/exceptions.dart'
-    show IllegalStateMachineMutation, IllegalStateTransition;
+export 'src/exceptions.dart' show IllegalStateMachineMutation;
 export 'src/state_machine.dart'
     show State, StateChange, StateMachine, StateTransition;
