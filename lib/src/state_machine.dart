@@ -140,19 +140,19 @@ class State extends Disposable implements Function {
   /// the initialState State receives an
   /// onEnter event where the from state
   /// is this stub one.
-  /// 
+  ///
   /// You can check that condition with:
-  /// 
+  ///
   /// initialState.onEnter((change) {
   ///   if (!change.from == State.none) {
   ///     // do something here
   ///   }
   /// })
-  /// 
+  ///
   /// to ignore this false initial event.
-  /// 
+  ///
   /// bool, true if this state is None,
-  /// false otherwise  
+  /// false otherwise
   static final none = State._('__none__', null, listenTo: false);
 
   @override
@@ -186,7 +186,7 @@ class StateChange {
   /// after stm.start(initialState)
   /// To ignore these events you can check
   /// this flag and eventually ignore it:
-  /// 
+  ///
   /// initialState.onEnter((change) {
   ///   if (!change.isInitial) {
   ///     // do something here
