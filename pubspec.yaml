@@ -13,7 +13,10 @@ environment:
     sdk: '>=2.4.0 <3.0.0'
 
 dependencies:
-    w_common: ^1.20.1
+    w_common:
+        git:
+            url: git@github.com:Workiva/w_common.git
+            ref: flutter-fix
 
 dev_dependencies:
     build_runner: ^1.7.1
