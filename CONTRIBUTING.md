@@ -17,7 +17,7 @@ Have a bug to report or an improvement/feature to request? Please
 the issue template with as much detail as necessary.
 
 ###### Workiva Employees
-> __Contact us on Slack:__ [\#support-client-plat](https://workiva.slack.com/app_redirect?channel=support-client-plat)
+> __Contact us on Slack:__ [\#support-frontend-architecture](https://workiva.slack.com/app_redirect?channel=support-frontend-architecture)
 
 Have a bug to report or an improvement/feature to request?
 Please contact us on Slack or [create a JIRA ticket](https://jira.atl.workiva.net/secure/CreateIssue!default.jspa?pid=CPLAT&component=state_machine)
