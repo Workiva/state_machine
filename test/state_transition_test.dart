@@ -56,6 +56,7 @@ void main() {
 
     test('should allow listening', () async {
       var c = Completer();
+      // ignore: deprecated_member_use_from_same_package
       close.listen(c.complete);
       expect(close(), isTrue);
       expect((await c.future).from, equals(isOpen));
