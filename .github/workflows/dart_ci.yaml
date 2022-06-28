@@ -13,6 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         sdk: [ 2.13.4, stable, beta, dev ]
     steps:
