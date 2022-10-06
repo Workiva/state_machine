@@ -1,5 +1,5 @@
 name: state_machine
-version: 2.2.10
+version: 2.2.11
 description: Finite state machine library. Easily define legal state transitions.
     Listen to state entrances, departures, and transitions.
 homepage: https://github.com/Workiva/state_machine
