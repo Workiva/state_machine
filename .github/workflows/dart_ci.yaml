@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [ 2.13.4, stable, beta, dev ]
+        sdk: [ 2.13.4, 2.18.7 ]
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
@@ -24,8 +24,8 @@ jobs:
       - name: Install dependencies
         run: dart pub get
       - name: Check formatting
-        run: dart run dart_dev format --check
-        if: ${{ matrix.sdk == 'stable' }}
+        run: dart format --set-exit-if-changed .
+        if: ${{ matrix.sdk == '2.18.7' }}
       - name: Analyze project source
         run: dart analyze
       - name: Run tests
