@@ -120,8 +120,6 @@ class State extends Disposable implements Function {
     });
   }
 
-  State._none(StateMachine machine) : this._('__none__', machine);
-
   State._wildcard() : this._('__wildcard__', null, listenTo: false);
 
   /// Stream of enter events. Enter event occurs every time
@@ -137,11 +135,31 @@ class State extends Disposable implements Function {
     return _machine.current == this;
   }
 
+  /// When starting the machine
+  /// by calling stm.start(initialState)
+  /// the initialState State receives an
+  /// onEnter event where the from state
+  /// is this stub one.
+  ///
+  /// You can check that condition with:
+  ///
+  /// initialState.onEnter((change) {
+  ///   if (!change.from == State.none) {
+  ///     // do something here
+  ///   }
+  /// })
+  ///
+  /// to ignore this false initial event.
+  ///
+  /// bool, true if this state is None,
+  /// false otherwise
+  static final none = State._('__none__', null, listenTo: false);
+
   @override
   String toString() {
     String name = this.name;
-    if (name == '__none__') {
-      name = 'none - state machine has yet to start';
+    if (this == none) {
+      return 'State: none - state machine has yet to start';
     }
     return 'State: $name (active: ${this()}, machine: ${_machine.name})';
   }
@@ -164,10 +182,24 @@ class StateChange {
 
   StateChange._(State this.from, State this.to, this.payload);
 
+  /// StateChange can also occour
+  /// after stm.start(initialState)
+  /// To ignore these events you can check
+  /// this flag and eventually ignore it:
+  ///
+  /// initialState.onEnter((change) {
+  ///   if (!change.isInitial) {
+  ///     // do something here
+  ///   }
+  /// })
+  bool get isInitial {
+    return this.from == State.none;
+  }
+
   @override
   String toString() {
     StringBuffer sb = StringBuffer();
-    String fromName = from.name == '__none__' ? '(none)' : from.name;
+    String fromName = isInitial ? '(none)' : from.name;
     sb.writeln('StateChange: ${fromName} --> ${to.name}');
     if (payload != null) {
       sb.writeln('    payload: $payload');
@@ -246,7 +278,8 @@ class StateMachine extends Disposable {
     /// Start the machine in a temporary state.
     /// This allows an initial state transition to occur
     /// when the machine is started via [start].
-    _current = State._none(this);
+    _current = State.none;
+
     manageDisposable(_current);
   }
 

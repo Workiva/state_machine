@@ -32,6 +32,7 @@ void main() {
 
     test('should be in a dummy state until the machine has been started', () {
       expect(machine.current.name, equals('__none__'));
+      expect(machine.current == State.none, isTrue);
     });
 
     test('should throw if machine is started more than once', () {
