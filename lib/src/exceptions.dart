@@ -30,13 +30,13 @@ class IllegalStateMachineMutation implements Exception {
 /// machine is in a state that is not defined as a legal "from"
 /// state by the [StateTransition] instance.
 class IllegalStateTransition implements Exception {
-  State from;
-  State to;
+  State? from;
+  State? to;
   StateTransition transition;
   IllegalStateTransition(
-      StateTransition this.transition, State this.from, State this.to);
+      StateTransition this.transition, State? this.from, State? this.to);
   String get message =>
-      '("${transition.name}") cannot transition from "${from.name}" to "${to.name}".';
+      '("${transition.name}") cannot transition from "${from!.name}" to "${to!.name}".';
   @override
   String toString() => 'IllegalStateTransition: $message';
 }

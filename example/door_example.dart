@@ -21,25 +21,25 @@ import 'package:state_machine/state_machine.dart';
 
 import 'door.dart';
 
-Door door;
+Door? door;
 
 activateState(State state) {
   querySelectorAll('.state').forEach((element) {
     element.className = 'state';
   });
-  querySelector('#${state.name}').className += ' active';
+  querySelector('#${state.name}')!.className += ' active';
 }
 
 closeDoor() {
-  querySelector('#door-frame').className = 'closed';
+  querySelector('#door-frame')!.className = 'closed';
 }
 
 lockDoor() {
-  querySelector('#door-frame').className = 'locked';
+  querySelector('#door-frame')!.className = 'locked';
 }
 
 openDoor() {
-  querySelector('#door-frame').className = 'open';
+  querySelector('#door-frame')!.className = 'open';
 }
 
 illegalStateTransition(Element state, e) {
@@ -55,47 +55,47 @@ void main() {
   door = Door();
 
   // Wire up state changes to DOM changes
-  door.isClosed.onEnter.listen((StateChange change) {
+  door!.isClosed!.onEnter!.listen((StateChange change) {
     print('');
     print(change);
     print(door);
-    activateState(door.isClosed);
+    activateState(door!.isClosed!);
     closeDoor();
   });
 
-  door.isLocked.onEnter.listen((StateChange change) {
+  door!.isLocked!.onEnter!.listen((StateChange change) {
     print('');
     print(change);
     print(door);
-    activateState(door.isLocked);
+    activateState(door!.isLocked!);
     lockDoor();
   });
 
-  door.isOpen.onEnter.listen((StateChange change) {
+  door!.isOpen!.onEnter!.listen((StateChange change) {
     print('');
     print(change);
     print(door);
-    activateState(door.isOpen);
+    activateState(door!.isOpen!);
     openDoor();
   });
 
   // Wire up controls to state machine
-  var open = querySelector('#open');
-  var close = querySelector('#closed');
-  var lock = querySelector('#locked');
+  var open = querySelector('#open')!;
+  var close = querySelector('#closed')!;
+  var lock = querySelector('#locked')!;
   open.onClick.listen((event) {
     try {
-      door.open();
+      door!.open!();
     } on IllegalStateTransition catch (e) {
       illegalStateTransition(open, e);
     }
   });
   close.onClick.listen((event) {
     try {
-      if (door.isLocked()) {
-        door.unlock();
+      if (door!.isLocked!()) {
+        door!.unlock!();
       } else {
-        door.close();
+        door!.close!();
       }
     } on IllegalStateTransition catch (e) {
       illegalStateTransition(close, e);
@@ -103,7 +103,7 @@ void main() {
   });
   lock.onClick.listen((event) {
     try {
-      door.lock();
+      door!.lock!();
     } on IllegalStateTransition catch (e) {
       illegalStateTransition(lock, e);
     }
@@ -111,12 +111,12 @@ void main() {
 
   print(door);
   print('');
-  print(door.isOpen);
-  print(door.isClosed);
-  print(door.isLocked);
+  print(door!.isOpen);
+  print(door!.isClosed);
+  print(door!.isLocked);
   print('');
-  print(door.open);
-  print(door.close);
-  print(door.lock);
-  print(door.unlock);
+  print(door!.open);
+  print(door!.close);
+  print(door!.lock);
+  print(door!.unlock);
 }

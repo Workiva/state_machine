@@ -22,15 +22,15 @@ import 'package:test/test.dart';
 void main() {
   group('StateTransition', () {
     StateMachine machine;
-    State isBroken;
-    State isClosed;
-    State isLocked;
-    State isOpen;
-    StateTransition breakThrough;
-    StateTransition close;
-    StateTransition lock;
-    StateTransition open;
-    StateTransition unlock;
+    late State isBroken;
+    late State isClosed;
+    late State isLocked;
+    late State isOpen;
+    late StateTransition breakThrough;
+    late StateTransition close;
+    late StateTransition lock;
+    late StateTransition open;
+    late StateTransition unlock;
 
     setUp(() {
       machine = StateMachine('machine');
@@ -94,7 +94,7 @@ void main() {
         () async {
       var c = Completer();
       var fromStates = [];
-      breakThrough.stream.listen((StateChange stateChange) {
+      breakThrough.stream!.listen((StateChange stateChange) {
         fromStates.add(stateChange.from);
         if (fromStates.length >= 2) {
           c.complete();
@@ -137,7 +137,7 @@ void main() {
       Completer closeC = Completer();
       Completer openC = Completer();
 
-      isOpen.onEnter.listen((stateChange) {
+      isOpen.onEnter!.listen((stateChange) {
         // state change from the transition to initial starting state
         String s = stateChange.toString();
         expect(s, contains('(none)'));
@@ -145,7 +145,7 @@ void main() {
         openC.complete();
       });
 
-      isClosed.onEnter.listen((stateChange) {
+      isClosed.onEnter!.listen((stateChange) {
         // manual state change, which should have a payload
         String s = stateChange.toString();
         expect(s, contains(isOpen.name));

@@ -36,16 +36,16 @@ class Door extends Disposable {
     _machine.start(isOpen);
   }
 
-  State isClosed;
-  State isLocked;
-  State isOpen;
+  State? isClosed;
+  State? isLocked;
+  State? isOpen;
 
-  StateTransition close;
-  StateTransition lock;
-  StateTransition open;
-  StateTransition unlock;
+  StateTransition? close;
+  StateTransition? lock;
+  StateTransition? open;
+  StateTransition? unlock;
 
-  StateMachine _machine;
+  late StateMachine _machine;
 
   @override
   String toString() => _machine.toString();

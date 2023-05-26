@@ -5,7 +5,7 @@ description: Finite state machine library. Easily define legal state transitions
 homepage: https://github.com/Workiva/state_machine
 
 environment:
-    sdk: ">=2.11.0 <3.0.0"
+    sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
   w_common: '>=2.0.0 <4.0.0'
