@@ -78,7 +78,7 @@ void main() {
     });
 
     test('.toString() should explain what the __none__ state means', () {
-      State? noneState = machine.current;
+      State noneState = machine.current;
       String s = noneState.toString();
       expect(s, contains('machine has yet to start'));
       expect(s, isNot(contains('__none__')));
