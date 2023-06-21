@@ -31,7 +31,7 @@ void main() {
     });
 
     test('should be in a dummy state until the machine has been started', () {
-      expect(machine.current!.name, equals('__none__'));
+      expect(machine.current.name, equals('__none__'));
     });
 
     test('should throw if machine is started more than once', () {
@@ -43,7 +43,7 @@ void main() {
         'should fire the onEnter event for the starting state when the machine starts',
         () async {
       var c = Completer();
-      state.onEnter!.listen(c.complete);
+      state.onEnter.listen(c.complete);
       machine.start(state);
       await c.future;
     });

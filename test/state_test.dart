@@ -39,7 +39,7 @@ void main() {
 
     test('should allow listening to onEnter event', () async {
       var c = Completer();
-      isOn.onEnter!.listen(c.complete);
+      isOn.onEnter.listen(c.complete);
       machine.start(isOff);
       turnOn();
       expect((await c.future).from, equals(isOff));
@@ -47,7 +47,7 @@ void main() {
 
     test('should allow litening to onLeave event', () async {
       var c = Completer();
-      isOff.onLeave!.listen(c.complete);
+      isOff.onLeave.listen(c.complete);
       machine.start(isOff);
       turnOn();
       expect((await c.future).to, equals(isOn));
@@ -64,7 +64,7 @@ void main() {
 
     test('.toString() should provide a helpful result', () async {
       machine.start(isOn);
-      await isOn.onEnter!.first;
+      await isOn.onEnter.first;
 
       String isOnStr = isOn.toString();
       expect(isOnStr, contains(isOn.name));
@@ -86,7 +86,7 @@ void main() {
 
     test('canCall should return accordingly', () async {
       var c = Completer();
-      isOff.onLeave!.listen(c.complete);
+      isOff.onLeave.listen(c.complete);
       machine.start(isOff);
       expect(turnOn.canCall(), isTrue);
       turnOn();

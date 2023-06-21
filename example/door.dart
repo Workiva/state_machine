@@ -36,14 +36,14 @@ class Door extends Disposable {
     _machine.start(isOpen);
   }
 
-  State? isClosed;
-  State? isLocked;
-  State? isOpen;
+  late State isClosed;
+  late State isLocked;
+  late State isOpen;
 
-  StateTransition? close;
-  StateTransition? lock;
-  StateTransition? open;
-  StateTransition? unlock;
+  late StateTransition close;
+  late StateTransition lock;
+  late StateTransition open;
+  late StateTransition unlock;
 
   late StateMachine _machine;
 

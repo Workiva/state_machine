@@ -66,7 +66,7 @@ import 'package:w_common/disposable.dart';
 /// ("open" or "secure", for example).
 /// 2. It reads better when calling the state to determine if it's active,
 /// as demonstrated above when calling `isOpen()` and `isClosed()`.
-class State extends Disposable implements Function {
+class State extends Disposable {
   @override
   String get disposableTypeName => 'State';
 
@@ -80,44 +80,41 @@ class State extends Disposable implements Function {
   /// [StateMachine] that this state is a part of.
   StateMachine? _machine;
 
-  /// Stream of onEnter events from [_onEnterController]
-  /// as a broadcast stream.
-  Stream<StateChange>? _onEnter;
-
   /// Stream controller used internally to create
   /// the onEnter stream.
-  late StreamController<StateChange> _onEnterController;
+  late StreamController<StateChange> _onEnterController = StreamController();
 
-  /// Stream of onLeave events from [_onLeaveController]
+  /// Stream of onEnter events from [_onEnterController]
   /// as a broadcast stream.
-  Stream<StateChange>? _onLeave;
+  late Stream<StateChange> _onEnter =
+      _onEnterController.stream.asBroadcastStream();
 
   /// Stream controller used internally to create
   /// the onLeave stream.
-  late StreamController<StateChange> _onLeaveController;
+  late StreamController<StateChange> _onLeaveController = StreamController();
 
-  State._(String this.name, StateMachine? this._machine,
-      {bool listenTo = true}) {
-    _onEnterController = StreamController();
-    _onEnter = _onEnterController.stream.asBroadcastStream();
-    _onLeaveController = StreamController();
-    _onLeave = _onLeaveController.stream.asBroadcastStream();
+  /// Stream of onLeave events from [_onLeaveController]
+  /// as a broadcast stream.
+  late Stream<StateChange> _onLeave =
+      _onLeaveController.stream.asBroadcastStream();
 
+  State._(this.name, this._machine, {bool listenTo = true}) {
     manageStreamController(_onEnterController);
     manageStreamController(_onLeaveController);
 
     if (!listenTo) return;
-
-    listenToStream(_machine!.onStateChange!, (StateChange stateChange) {
-      if (stateChange.from == this) {
-        // Left this state. Notify listeners.
-        _onLeaveController.add(stateChange);
-      }
-      if (stateChange.to == this) {
-        // Entered this state. Notify listeners.
-        _onEnterController.add(stateChange);
-      }
-    });
+    if (_machine != null && _machine!.onStateChange != null) {
+      listenToStream(_machine!.onStateChange!, (StateChange stateChange) {
+        if (stateChange.from == this) {
+          // Left this state. Notify listeners.
+          _onLeaveController.add(stateChange);
+        }
+        if (stateChange.to == this) {
+          // Entered this state. Notify listeners.
+          _onEnterController.add(stateChange);
+        }
+      });
+    }
   }
 
   State._none(StateMachine machine) : this._('__none__', machine);
@@ -126,11 +123,11 @@ class State extends Disposable implements Function {
 
   /// Stream of enter events. Enter event occurs every time
   /// the machine enters this state.
-  Stream<StateChange>? get onEnter => _onEnter;
+  Stream<StateChange> get onEnter => _onEnter;
 
   /// Stream of leave events. Leave event occurs every time
   /// the machine leaves this state.
-  Stream<StateChange>? get onLeave => _onLeave;
+  Stream<StateChange> get onLeave => _onLeave;
 
   /// Determine whether or not this [State] is active.
   bool call([_]) {
@@ -153,22 +150,22 @@ class State extends Disposable implements Function {
 /// [payload].
 class StateChange {
   /// State the machine transitioned from.
-  State? from;
+  State from;
 
   /// Payload supplied when the transition was called,
   /// if any.
   dynamic payload;
 
   /// State the machine transitioned to.
-  State? to;
+  State to;
 
-  StateChange._(State? this.from, State? this.to, this.payload);
+  StateChange._(this.from, this.to, this.payload);
 
   @override
   String toString() {
     StringBuffer sb = StringBuffer();
-    String fromName = from!.name == '__none__' ? '(none)' : from!.name;
-    sb.writeln('StateChange: ${fromName} --> ${to!.name}');
+    String fromName = from.name == '__none__' ? '(none)' : from.name;
+    sb.writeln('StateChange: ${fromName} --> ${to.name}');
     if (payload != null) {
       sb.writeln('    payload: $payload');
     }
@@ -219,8 +216,12 @@ class StateMachine extends Disposable {
   String name;
 
   /// [State] that the machine is currently in.
-  State? get current => _current;
-  State? _current;
+  State get current => _current;
+
+  /// Start the machine in a temporary state.
+  /// This allows an initial state transition to occur
+  /// when the machine is started via [start].
+  late State _current = State._none(this);
 
   /// Whether or not this state machine has been started.
   /// If it has, calls to [newState] and [newStateTransition]
@@ -242,12 +243,7 @@ class StateMachine extends Disposable {
     _stateChangeController = StreamController();
     manageStreamController(_stateChangeController);
     _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
-
-    /// Start the machine in a temporary state.
-    /// This allows an initial state transition to occur
-    /// when the machine is started via [start].
-    _current = State._none(this);
-    manageDisposable(_current!);
+    manageDisposable(_current);
   }
 
   /// Stream of state change events. This allows [State]s
@@ -276,8 +272,7 @@ class StateMachine extends Disposable {
   /// This transition will only succeed when this [StateMachine]
   /// is in one of the states listed in [from]. When this transition
   /// occurs, this [StateMachine] will move to the [to] state.
-  StateTransition newStateTransition(
-      String name, List<State?> from, State? to) {
+  StateTransition newStateTransition(String name, List<State> from, State to) {
     if (_started)
       throw IllegalStateMachineMutation(
           'Cannot create new state transition ($name) once the machine has been started.');
@@ -301,7 +296,7 @@ class StateMachine extends Disposable {
   }
 
   /// Start the state machine at the given starting state.
-  void start(State? startingState) {
+  void start(State startingState) {
     if (_started) throw StateError('Machine has already been started.');
     _started = true;
     _transition(StateChange._(current, startingState, null));
@@ -310,7 +305,7 @@ class StateMachine extends Disposable {
   /// Set the machine state and trigger a state change event.
   void _transition(StateChange stateChange) {
     _current = stateChange.to;
-    manageDisposable(_current!);
+    manageDisposable(_current);
     _stateChangeController.add(stateChange);
   }
 }
@@ -393,7 +388,7 @@ class StateMachine extends Disposable {
 ///     plugIn();
 ///     turnOn(); // "Light is on!"
 ///     unplug(); // "Light is off :("
-class StateTransition extends Disposable implements Function {
+class StateTransition extends Disposable {
   @override
   String get disposableTypeName => 'StateTransition';
 
@@ -426,10 +421,10 @@ class StateTransition extends Disposable implements Function {
 
   /// [State] to transition the machine to when executing
   /// this transition.
-  State? _to;
+  State _to;
 
   StateTransition._(String this.name, StateMachine this._machine,
-      List<State?> this._from, State? this._to) {
+      List<State> this._from, State this._to) {
     if (_to == State.any)
       throw ArgumentError(
           'Cannot transition to the wildcard state "State.any"');
@@ -517,7 +512,7 @@ class StateTransition extends Disposable implements Function {
     StringBuffer sb = StringBuffer();
     sb.writeln('StateTransition: $name (machine: ${_machine.name})');
     sb.writeln('    from: ${_from.map((f) => f!.name).join(', ')}');
-    sb.writeln('    to: ${_to!.name}');
+    sb.writeln('    to: ${_to.name}');
     return sb.toString();
   }
 }
