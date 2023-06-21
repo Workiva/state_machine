@@ -21,10 +21,10 @@ import 'package:test/test.dart';
 
 void main() {
   group('State', () {
-    StateMachine machine;
-    State isOn;
-    State isOff;
-    StateTransition turnOn;
+    late StateMachine machine;
+    late State isOn;
+    late State isOff;
+    late StateTransition turnOn;
 
     setUp(() {
       machine = StateMachine('machine');

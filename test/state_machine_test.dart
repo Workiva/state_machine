@@ -22,8 +22,8 @@ import 'package:test/test.dart';
 
 void main() {
   group('StateMachine', () {
-    StateMachine machine;
-    State state;
+    late StateMachine machine;
+    late State state;
 
     setUp(() {
       machine = StateMachine('machine');

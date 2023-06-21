@@ -21,25 +21,25 @@ import 'package:state_machine/state_machine.dart';
 
 import 'door.dart';
 
-Door door;
+late Door door;
 
 activateState(State state) {
   querySelectorAll('.state').forEach((element) {
     element.className = 'state';
   });
-  querySelector('#${state.name}').className += ' active';
+  querySelector('#${state.name}')!.className += ' active';
 }
 
 closeDoor() {
-  querySelector('#door-frame').className = 'closed';
+  querySelector('#door-frame')!.className = 'closed';
 }
 
 lockDoor() {
-  querySelector('#door-frame').className = 'locked';
+  querySelector('#door-frame')!.className = 'locked';
 }
 
 openDoor() {
-  querySelector('#door-frame').className = 'open';
+  querySelector('#door-frame')!.className = 'open';
 }
 
 illegalStateTransition(Element state, e) {
@@ -80,9 +80,9 @@ void main() {
   });
 
   // Wire up controls to state machine
-  var open = querySelector('#open');
-  var close = querySelector('#closed');
-  var lock = querySelector('#locked');
+  var open = querySelector('#open')!;
+  var close = querySelector('#closed')!;
+  var lock = querySelector('#locked')!;
   open.onClick.listen((event) {
     try {
       door.open();

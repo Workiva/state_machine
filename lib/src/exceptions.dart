@@ -33,8 +33,7 @@ class IllegalStateTransition implements Exception {
   State from;
   State to;
   StateTransition transition;
-  IllegalStateTransition(
-      StateTransition this.transition, State this.from, State this.to);
+  IllegalStateTransition(StateTransition this.transition, this.from, this.to);
   String get message =>
       '("${transition.name}") cannot transition from "${from.name}" to "${to.name}".';
   @override

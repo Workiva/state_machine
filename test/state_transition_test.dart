@@ -22,15 +22,15 @@ import 'package:test/test.dart';
 void main() {
   group('StateTransition', () {
     StateMachine machine;
-    State isBroken;
-    State isClosed;
-    State isLocked;
-    State isOpen;
-    StateTransition breakThrough;
-    StateTransition close;
-    StateTransition lock;
-    StateTransition open;
-    StateTransition unlock;
+    late State isBroken;
+    late State isClosed;
+    late State isLocked;
+    late State isOpen;
+    late StateTransition breakThrough;
+    late StateTransition close;
+    late StateTransition lock;
+    late StateTransition open;
+    late StateTransition unlock;
 
     setUp(() {
       machine = StateMachine('machine');
