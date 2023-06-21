@@ -103,8 +103,8 @@ class State extends Disposable {
     manageStreamController(_onLeaveController);
 
     if (!listenTo) return;
-    if (_machine != null && _machine!.onStateChange != null) {
-      listenToStream(_machine!.onStateChange!, (StateChange stateChange) {
+    if (_machine != null) {
+      listenToStream(_machine!.onStateChange, (StateChange stateChange) {
         if (stateChange.from == this) {
           // Left this state. Notify listeners.
           _onLeaveController.add(stateChange);
@@ -230,17 +230,18 @@ class StateMachine extends Disposable {
 
   /// Stream controller used internally to control the
   /// state change stream.
-  late StreamController<StateChange> _stateChangeController;
+  late StreamController<StateChange> _stateChangeController =
+      StreamController();
 
   /// Stream of state changes used internally to notify state
   /// and state transition listeners.
-  Stream<StateChange>? _stateChangeStream;
+  late Stream<StateChange> _stateChangeStream =
+      _stateChangeController.stream.asBroadcastStream();
 
   /// List of states created by for this machine.
   List<State> _states = [];
 
   StateMachine(String this.name) {
-    _stateChangeController = StreamController();
     manageStreamController(_stateChangeController);
     _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
     manageDisposable(_current);
@@ -251,7 +252,7 @@ class StateMachine extends Disposable {
   /// and notify listeners as necessary.
   ///
   /// The event payload will be the previous [State].
-  Stream<StateChange>? get onStateChange => _stateChangeStream;
+  Stream<StateChange> get onStateChange => _stateChangeStream;
 
   /// Create a new [State] for this [StateMachine].
   ///
@@ -401,23 +402,25 @@ class StateTransition extends Disposable {
 
   /// List of valid [State]s that the machine must be in
   /// for this transition to occur.
-  List<State?> _from;
+  List<State> _from;
 
   /// [StateMachine] that this state transition is a part of.
   StateMachine _machine;
 
+  /// Stream controller used internally to create a stream of
+  /// transition events.
+  late StreamController<StateChange> _streamController =
+      StreamController<StateChange>();
+
   /// Stream of transition events from [_streamController] as
   /// a broadcast stream. Transition event occurs every time
   /// this transition executes successfully.
-  Stream<StateChange>? _stream;
+  late Stream<StateChange> _stream =
+      _streamController.stream.asBroadcastStream();
 
   /// Stream of transition events. A transition event occurs every time this
   /// transition executes successfully.
-  Stream<StateChange>? get stream => _stream;
-
-  /// Stream controller used internally to create a stream of
-  /// transition events.
-  late StreamController<StateChange> _streamController;
+  Stream<StateChange> get stream => _stream;
 
   /// [State] to transition the machine to when executing
   /// this transition.
@@ -428,9 +431,7 @@ class StateTransition extends Disposable {
     if (_to == State.any)
       throw ArgumentError(
           'Cannot transition to the wildcard state "State.any"');
-    _streamController = StreamController<StateChange>();
     manageStreamController(_streamController);
-    _stream = _streamController.stream.asBroadcastStream();
   }
 
   /// Listen for transition events. Transition event occurs every time
@@ -440,7 +441,7 @@ class StateTransition extends Disposable {
   @Deprecated('Listen to \'stream\' directly')
   StreamSubscription listen(void onTransition(StateChange stateChange),
       {Function? onError, void onDone()?, bool? cancelOnError}) {
-    final streamSubscription = listenToStream(_stream!, onTransition,
+    final streamSubscription = listenToStream(_stream, onTransition,
         onError: onError, onDone: onDone, cancelOnError: cancelOnError);
     return streamSubscription;
   }
@@ -511,7 +512,7 @@ class StateTransition extends Disposable {
   String toString() {
     StringBuffer sb = StringBuffer();
     sb.writeln('StateTransition: $name (machine: ${_machine.name})');
-    sb.writeln('    from: ${_from.map((f) => f!.name).join(', ')}');
+    sb.writeln('    from: ${_from.map((f) => f.name).join(', ')}');
     sb.writeln('    to: ${_to.name}');
     return sb.toString();
   }

@@ -94,7 +94,7 @@ void main() {
         () async {
       var c = Completer();
       var fromStates = [];
-      breakThrough.stream!.listen((StateChange stateChange) {
+      breakThrough.stream.listen((StateChange stateChange) {
         fromStates.add(stateChange.from);
         if (fromStates.length >= 2) {
           c.complete();
