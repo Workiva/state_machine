@@ -5,10 +5,17 @@ on:
     branches:
       - 'master'
       - 'test_consume_*'
+    tags:
+      - '**'
   pull_request:
     branches:
       - '**'
 
+permissions:
+  pull-requests: write
+  contents: write
+  id-token: write
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,3 +37,8 @@ jobs:
         run: dart analyze
       - name: Run tests
         run: dart test
+      - uses: anchore/sbom-action@v0
+        if: ${{ matrix.sdk == '2.18.7' }}
+        with:
+          path: ./
+          format: cyclonedx-json
