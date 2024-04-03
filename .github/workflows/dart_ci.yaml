@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        sdk: [ 2.13.4, 2.18.7 ]
+        sdk: [ 2.19.6 ]
     steps:
       - uses: actions/checkout@v2
       - uses: dart-lang/setup-dart@v1
@@ -32,13 +32,13 @@ jobs:
         run: dart pub get
       - name: Check formatting
         run: dart format --set-exit-if-changed .
-        if: ${{ matrix.sdk == '2.18.7' }}
+        if: ${{ matrix.sdk == '2.19.6' }}
       - name: Analyze project source
         run: dart analyze
       - name: Run tests
         run: dart test
       - uses: anchore/sbom-action@v0
-        if: ${{ matrix.sdk == '2.18.7' }}
+        if: ${{ matrix.sdk == '2.19.6' }}
         with:
           path: ./
           format: cyclonedx-json
