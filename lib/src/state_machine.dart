@@ -241,7 +241,7 @@ class StateMachine extends Disposable {
   /// List of states created by for this machine.
   List<State> _states = [];
 
-  StateMachine(String this.name) {
+  StateMachine(this.name) {
     manageStreamController(_stateChangeController);
     _stateChangeStream = _stateChangeController.stream.asBroadcastStream();
     manageDisposable(_current);
@@ -426,8 +426,7 @@ class StateTransition extends Disposable {
   /// this transition.
   State _to;
 
-  StateTransition._(String this.name, StateMachine this._machine,
-      List<State> this._from, State this._to) {
+  StateTransition._(this.name, this._machine, this._from, this._to) {
     if (_to == State.any)
       throw ArgumentError(
           'Cannot transition to the wildcard state "State.any"');

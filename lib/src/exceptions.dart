@@ -21,7 +21,8 @@ import 'package:state_machine/src/state_machine.dart';
 /// that has already been started.
 class IllegalStateMachineMutation implements Exception {
   String message;
-  IllegalStateMachineMutation(String this.message);
+  IllegalStateMachineMutation(this.message);
+  @override
   String toString() => 'IllegalStateMachineMutation: $message';
 }
 
@@ -33,7 +34,7 @@ class IllegalStateTransition implements Exception {
   State from;
   State to;
   StateTransition transition;
-  IllegalStateTransition(StateTransition this.transition, this.from, this.to);
+  IllegalStateTransition(this.transition, this.from, this.to);
   String get message =>
       '("${transition.name}") cannot transition from "${from.name}" to "${to.name}".';
   @override
