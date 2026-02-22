@@ -14,8 +14,8 @@
 
 library state_machine.example.door;
 
+import 'package:state_machine/src/disposable/disposable.dart';
 import 'package:state_machine/state_machine.dart';
-import 'package:w_common/disposable.dart';
 
 class Door extends Disposable {
   @override

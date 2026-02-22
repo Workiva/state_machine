@@ -16,8 +16,8 @@ library state_machine.src.state_machine;
 
 import 'dart:async';
 
+import 'package:state_machine/src/disposable/disposable.dart';
 import 'package:state_machine/src/exceptions.dart';
-import 'package:w_common/disposable.dart';
 
 /// Represents a state that can be visited within a
 /// [StateMachine] instance.
