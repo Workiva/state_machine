@@ -103,18 +103,6 @@ class State extends Disposable {
     manageStreamController(_onLeaveController);
 
     if (!listenTo) return;
-    if (_machine != null) {
-      listenToStream(_machine!.onStateChange, (StateChange stateChange) {
-        if (stateChange.from == this) {
-          // Left this state. Notify listeners.
-          _onLeaveController.add(stateChange);
-        }
-        if (stateChange.to == this) {
-          // Entered this state. Notify listeners.
-          _onEnterController.add(stateChange);
-        }
-      });
-    }
   }
 
   State._none(StateMachine machine) : this._('__none__', machine);
@@ -305,10 +293,20 @@ class StateMachine extends Disposable {
 
   /// Set the machine state and trigger a state change event.
   void _transition(StateChange stateChange) {
-    _current = stateChange.to;
-    manageDisposable(_current);
-    _stateChangeController.add(stateChange);
-  }
+  // Notify the current state that it is being left
+  _current._onLeaveController.add(stateChange);
+
+  // Update the current state to the new state
+  _current = stateChange.to;
+  manageDisposable(_current);
+
+  // Notify the new state that it is being entered
+  _current._onEnterController.add(stateChange);
+
+  // Add the state change to the stream
+  _stateChangeController.add(stateChange);
+}
+
 }
 
 /// Represents a legal state transition for a  [StateMachine] instance.
